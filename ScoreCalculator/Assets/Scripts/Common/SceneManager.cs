@@ -46,4 +46,8 @@ public class SceneManager : Singleton<SceneManager> {
 			CurrentScene = sceneObj;
 		}
 	}
+
+	public GameObject GetCurrentScene() {
+		return CurrentScene;
+	}
 }

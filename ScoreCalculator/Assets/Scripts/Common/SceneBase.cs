@@ -8,11 +8,6 @@ public class SceneBase : MonoBehaviour {
 	
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
 	virtual public void Initialize() {
 
 	}

@@ -2,10 +2,11 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class HeaderContainer : MonoBehaviour {
+public class PlayerNameInputContainer : MonoBehaviour {
 
-	[SerializeField]	Button	TitleButton; 
-	[SerializeField]	Button	RuleConfigButton; 
+	[SerializeField]	Button	PrevButton; 
+	[SerializeField]	Button	NextButton; 
+	[SerializeField]	Button	InputEndButton; 
 
 //	// Use this for initialization
 //	void Start () {
@@ -19,5 +20,4 @@ public class HeaderContainer : MonoBehaviour {
 	
 	public void Init() {
 	}
-	
 }

@@ -2,10 +2,11 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class HeaderContainer : MonoBehaviour {
+public class ScoreInputContainer : MonoBehaviour {
 
-	[SerializeField]	Button	TitleButton; 
-	[SerializeField]	Button	RuleConfigButton; 
+	[SerializeField]	Button	PrevButton; 
+	[SerializeField]	Button	NextButton; 
+	[SerializeField]	Button	ResultButton; 
 
 //	// Use this for initialization
 //	void Start () {

@@ -2,10 +2,12 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class HeaderContainer : MonoBehaviour {
+public class ResultContainer : MonoBehaviour {
 
-	[SerializeField]	Button	TitleButton; 
-	[SerializeField]	Button	RuleConfigButton; 
+	[SerializeField]	Button	BackButton; 
+	[SerializeField]	Button	SaveButton; 
+	[SerializeField]	Button	KeepRestartButton; 
+	[SerializeField]	Button	ClearRestartButton; 
 
 //	// Use this for initialization
 //	void Start () {
@@ -16,7 +18,7 @@ public class HeaderContainer : MonoBehaviour {
 //	void Update () {
 //	
 //	}
-	
+
 	public void Init() {
 	}
 	
