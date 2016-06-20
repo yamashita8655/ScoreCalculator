@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ScoreInputScene : SceneBase {
 
@@ -8,6 +10,11 @@ public class ScoreInputScene : SceneBase {
 	[SerializeField]	GameObject	PlayerNameInputContainer;
 	[SerializeField]	GameObject	ScoreInputContainer;
 	[SerializeField]	GameObject	ResultContainer;
+	[SerializeField]	GameObject	PlayerScoreListNode;
+	[SerializeField]	ScrollRect	BaseScrollView;
+	
+	List<GameObject>	PlayerScoreListNodeList = new List<GameObject>();
+	PlayerScoreListNode	NowSelectPlayerScoreListNode = null;
 
 	enum ToggleType {
 		PlayerNameInput,
@@ -71,6 +78,9 @@ public class ScoreInputScene : SceneBase {
 	void PlayerNameInputInit() {
 		ToggleContainer(ToggleType.PlayerNameInput);
 		NowState = State.PlayerNameInputUpdate;
+		if (PlayerScoreListNodeList.Count == 0) {
+			AddPlayerScoreListNode();
+		}
 	}
 	
 	void PlayerNameInputUpdate() {
@@ -150,5 +160,16 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickResultClearRestartButton() {
+	}
+
+
+	private void AddPlayerScoreListNode() {
+		GameObject node = Instantiate(PlayerScoreListNode);
+		node.transform.SetParent(BaseScrollView.content);
+		node.transform.position = Vector3.zero;
+		node.transform.localScale = Vector3.one;
+		
+		PlayerScoreListNodeList.Add(node);
+		NowSelectPlayerScoreListNode = node.GetComponent<PlayerScoreListNode>();
 	}
 }
