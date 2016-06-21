@@ -168,8 +168,22 @@ public class ScoreInputScene : SceneBase {
 		node.transform.SetParent(BaseScrollView.content);
 		node.transform.position = Vector3.zero;
 		node.transform.localScale = Vector3.one;
-		
+
 		PlayerScoreListNodeList.Add(node);
 		NowSelectPlayerScoreListNode = node.GetComponent<PlayerScoreListNode>();
+		NowSelectPlayerScoreListNode.Setup(PlayerNameInputEndEditCallback);
+	}
+
+	void PlayerNameInputEndEditCallback(List<string> inputStrings) {
+		NowSelectPlayerScoreListNode.SetEnableInputField(false);
+		AddPlayerScoreListNode();
+
+		for (int i = 1; i < inputStrings.Count; i++) {
+			NowSelectPlayerScoreListNode.SetName(inputStrings[i]);
+			NowSelectPlayerScoreListNode.SetEnableInputField(false);
+			AddPlayerScoreListNode();
+		}
+
+		NowSelectPlayerScoreListNode.ActivateInputField();
 	}
 }
