@@ -15,6 +15,7 @@ public class ScoreInputScene : SceneBase {
 	
 	List<GameObject>	PlayerScoreListNodeList = new List<GameObject>();
 	PlayerScoreListNode	NowSelectPlayerScoreListNode = null;
+	int					NowSelectIndex = 0;
 
 	enum ToggleType {
 		PlayerNameInput,
@@ -56,6 +57,12 @@ public class ScoreInputScene : SceneBase {
 		PlayerNameInputContainer.SetActive(false); 
 		ScoreInputContainer.SetActive(false); 
 		ResultContainer.SetActive(false); 
+
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			PlayerScoreListNodeList[i].transform.parent = null;
+			Destroy(PlayerScoreListNodeList[i]);
+		}
+		PlayerScoreListNodeList.Clear();
 	}
 
 	// Update is called once per frame
@@ -126,6 +133,19 @@ public class ScoreInputScene : SceneBase {
 
 	// PlayerNameInputContainerのマウスイベント
 	public void OnClickPlayerNameInputPrevButton() {
+		if (PlayerScoreListNodeList.Count == 1) {
+			return;
+		}
+		
+		PlayerScoreListNodeList.RemoveAt(PlayerScoreListNodeList.Count-1);
+		if (NowSelectPlayerScoreListNode != null) {
+			NowSelectPlayerScoreListNode.transform.parent = null;
+			Destroy(NowSelectPlayerScoreListNode);
+			NowSelectPlayerScoreListNode = null;
+	 	}
+
+		NowSelectPlayerScoreListNode = PlayerScoreListNodeList[PlayerScoreListNodeList.Count-1].GetComponent<PlayerScoreListNode>();
+		NowSelectPlayerScoreListNode.SetEnableInputField(true);
 	}
 	
 	public void OnClickPlayerNameInputNextButton() {
