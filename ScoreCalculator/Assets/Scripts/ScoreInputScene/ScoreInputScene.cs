@@ -96,6 +96,30 @@ public class ScoreInputScene : SceneBase {
 	void ScoreInputInit() {
 		ToggleContainer(ToggleType.ScoreInput);
 		NowState = State.ScoreInputUpdate;
+
+		// 最後のリストが空の場合があるので、確認する
+		GameObject lastObj = PlayerScoreListNodeList[PlayerScoreListNodeList.Count-1];
+		PlayerScoreListNode lastNode = lastObj.GetComponent<PlayerScoreListNode>();
+		if (string.IsNullOrEmpty(lastNode.GetName())) {
+			Destroy(lastObj);
+		}
+		PlayerScoreListNodeList.RemoveAt(PlayerScoreListNodeList.Count-1);
+		
+		// スコア入力ノードを、プレイヤー数分一度に追加する
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			node.AddScoreListNode();
+			node.SetupScoreListNode(ScoreInputEndEditCallback);
+		}
+
+		NowSelectIndex = 0;
+		
+		// 最初のノードだけ、入力可能にしておく
+		GameObject firstObj = PlayerScoreListNodeList[NowSelectIndex];
+		PlayerScoreListNode firstNode = firstObj.GetComponent<PlayerScoreListNode>();
+		firstNode.SetEnableScoreInputField(true);
+		firstNode.ActivateScoreInputField();
 	}
 	
 	void ScoreInputUpdate() {
@@ -137,10 +161,11 @@ public class ScoreInputScene : SceneBase {
 			return;
 		}
 		
+		GameObject nowSelectObj = PlayerScoreListNodeList[PlayerScoreListNodeList.Count-1];
 		PlayerScoreListNodeList.RemoveAt(PlayerScoreListNodeList.Count-1);
 		if (NowSelectPlayerScoreListNode != null) {
 			NowSelectPlayerScoreListNode.transform.parent = null;
-			Destroy(NowSelectPlayerScoreListNode);
+			Destroy(nowSelectObj);
 			NowSelectPlayerScoreListNode = null;
 	 	}
 
@@ -205,5 +230,12 @@ public class ScoreInputScene : SceneBase {
 		}
 
 		NowSelectPlayerScoreListNode.ActivateInputField();
+	}
+
+	void ScoreInputEndEditCallback(List<string> inputStrings) {
+		GameObject nowObj = PlayerScoreListNodeList[NowSelectIndex];
+		PlayerScoreListNode nodeNode = nowObj.GetComponent<PlayerScoreListNode>();
+//		nodeNode.
+//		NowSelectIndex = 0;
 	}
 }

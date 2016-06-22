@@ -6,11 +6,11 @@ using System.Collections.Generic;
 
 public class ScoreListNode : MonoBehaviour {
     [SerializeField] InputField ScoreInputField;
-    [SerializeField] ScrollRect ScoreScrollRext;
-	
+
 	Action<List<string>> ScoreInputSceneEndEditCallback = null;
 
-	public void Setup() {
+	public void Setup(Action<List<string>> scoreInputEndEditCallback) {
+		ScoreInputSceneEndEditCallback = scoreInputEndEditCallback;
     }
 	
 	public void ActivateInputField() {
@@ -28,9 +28,9 @@ public class ScoreListNode : MonoBehaviour {
 	void Update () {
 	}
 	
-	public void OnEndEditScorenputField() {
+	public void OnEndEditScoreInputField() {
 		string inputString = ScoreInputField.text.Trim();
-		if (string.IsNullOrEmpty (inputString) == true) {
+		if (string.IsNullOrEmpty(inputString) == true) {
 			return;
 		}
 
@@ -44,7 +44,7 @@ public class ScoreListNode : MonoBehaviour {
 			}
 		}
 
-		NameInputField.text = stringList[0];
+		ScoreInputField.text = stringList[0];
 
 		if (ScoreInputSceneEndEditCallback != null) {
 			ScoreInputSceneEndEditCallback(stringList);
@@ -52,6 +52,6 @@ public class ScoreListNode : MonoBehaviour {
 	}
 
 	public void SetEnableInputField(bool enable) {
-		NameInputField.enabled = enable;
+		ScoreInputField.enabled = enable;
 	}
 }

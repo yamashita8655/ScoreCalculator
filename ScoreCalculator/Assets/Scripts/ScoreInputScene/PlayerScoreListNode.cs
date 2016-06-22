@@ -9,19 +9,39 @@ public class PlayerScoreListNode : MonoBehaviour {
     [SerializeField] Text TotalText;
     [SerializeField] Text RankText;
     [SerializeField] ScrollRect ScoreScrollRext;
+	[SerializeField] GameObject	ScoreListNodeObject;
 
 	Action<List<string>> ScoreInputSceneEndEditCallback = null;
+
+	List<GameObject>	ScoreListNodeList = new List<GameObject>();
+	ScoreListNode		NowSelectScoreListNode = null;
 
 	public void Setup(Action<List<string>> callback) {
 		ScoreInputSceneEndEditCallback = callback;
     }
 
+	public void SetupScoreListNode(Action<List<string>> callback) {
+		NowSelectScoreListNode.Setup(callback);
+	}
+
     public void SetName(string name) {
         NameInputField.text = name;
+    }
+    
+	public string GetName() {
+        return NameInputField.text;
     }
 
 	public void ActivateInputField() {
 		NameInputField.ActivateInputField();
+	}
+	
+	public void ActivateScoreInputField() {
+		NowSelectScoreListNode.ActivateInputField();
+	}
+
+	public void AddScoreListNode() {
+		AddScoreListNodeObject();
 	}
 
 	// Update is called once per frame
@@ -53,5 +73,21 @@ public class PlayerScoreListNode : MonoBehaviour {
 
 	public void SetEnableInputField(bool enable) {
 		NameInputField.enabled = enable;
+	}
+	
+	public void SetEnableScoreInputField(bool enable) {
+		NowSelectScoreListNode.SetEnableInputField(enable);
+	}
+
+	private void AddScoreListNodeObject() {
+		GameObject node = Instantiate(ScoreListNodeObject);
+		node.transform.SetParent(ScoreScrollRext.content);
+		node.transform.position = Vector3.zero;
+		node.transform.localScale = Vector3.one;
+
+		ScoreListNodeList.Add(node);
+		NowSelectScoreListNode = node.GetComponent<ScoreListNode>();
+		NowSelectScoreListNode.SetEnableInputField(false);
+//		NowSelectScoreListNode.Setup(PlayerNameInputEndEditCallback);
 	}
 }
