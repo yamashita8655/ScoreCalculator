@@ -12,24 +12,37 @@ public class PlayerScoreListNode : MonoBehaviour {
 	[SerializeField] GameObject	ScoreListNodeObject;
 
 	Action<List<string>> ScoreInputSceneEndEditCallback = null;
+	Action<List<string>, int> ScoreInputEndEditCallback = null;
 
 	List<GameObject>	ScoreListNodeList = new List<GameObject>();
 	ScoreListNode		NowSelectScoreListNode = null;
 
-	public void Setup(Action<List<string>> callback) {
+	int					Number = 0;
+
+	public void Setup(Action<List<string>> callback, Action<List<string>, int> scoreInputEndCallback, int number) {
 		ScoreInputSceneEndEditCallback = callback;
+		ScoreInputEndEditCallback = scoreInputEndCallback;
+		Number = number;
     }
 
-	public void SetupScoreListNode(Action<List<string>> callback) {
-		NowSelectScoreListNode.Setup(callback);
+	public void SetupScoreListNode() {
+		NowSelectScoreListNode.Setup(ScoreInputFieldEndEditCallback);
 	}
 
-    public void SetName(string name) {
-        NameInputField.text = name;
+	public void SetName(string name) {
+		NameInputField.text = name;
+	}
+
+    public void SetScoreText(string score) {
+		NowSelectScoreListNode.SetScoreText(score);
     }
     
 	public string GetName() {
         return NameInputField.text;
+    }
+    
+	public string GetScoreText() {
+		return NowSelectScoreListNode.GetScoreText();
     }
 
 	public void ActivateInputField() {
@@ -89,5 +102,9 @@ public class PlayerScoreListNode : MonoBehaviour {
 		NowSelectScoreListNode = node.GetComponent<ScoreListNode>();
 		NowSelectScoreListNode.SetEnableInputField(false);
 //		NowSelectScoreListNode.Setup(PlayerNameInputEndEditCallback);
+	}
+
+	private void ScoreInputFieldEndEditCallback(List<string> inputStrings) {
+		ScoreInputEndEditCallback(inputStrings, Number);
 	}
 }

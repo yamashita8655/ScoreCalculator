@@ -105,12 +105,16 @@ public class ScoreInputScene : SceneBase {
 		}
 		PlayerScoreListNodeList.RemoveAt(PlayerScoreListNodeList.Count-1);
 		
+		AddScoreInputListNode();
+	}
+
+	private void AddScoreInputListNode() {
 		// スコア入力ノードを、プレイヤー数分一度に追加する
 		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
 			GameObject obj = PlayerScoreListNodeList[i];
 			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
 			node.AddScoreListNode();
-			node.SetupScoreListNode(ScoreInputEndEditCallback);
+			node.SetupScoreListNode();
 		}
 
 		NowSelectIndex = 0;
@@ -187,6 +191,22 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickScoreInputNextButton() {
+		bool findEnpty = false;
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			if (string.IsNullOrEmpty(node.GetScoreText()) == true) {
+				findEnpty = true;
+				break;
+			}
+		}
+
+		if (findEnpty == true) {
+			return;
+		}
+
+		SetEnableScoreInputFieldList(false);
+		AddScoreInputListNode();
 	}
 	
 	public void OnClickScoreInputResultButton() {
@@ -216,7 +236,7 @@ public class ScoreInputScene : SceneBase {
 
 		PlayerScoreListNodeList.Add(node);
 		NowSelectPlayerScoreListNode = node.GetComponent<PlayerScoreListNode>();
-		NowSelectPlayerScoreListNode.Setup(PlayerNameInputEndEditCallback);
+		NowSelectPlayerScoreListNode.Setup(PlayerNameInputEndEditCallback, ScoreInputEndEditCallback, PlayerScoreListNodeList.Count-1);
 	}
 
 	void PlayerNameInputEndEditCallback(List<string> inputStrings) {
@@ -232,10 +252,32 @@ public class ScoreInputScene : SceneBase {
 		NowSelectPlayerScoreListNode.ActivateInputField();
 	}
 
-	void ScoreInputEndEditCallback(List<string> inputStrings) {
+	void ScoreInputEndEditCallback(List<string> inputStrings, int number) {
+		Debug.Log(number);
 		GameObject nowObj = PlayerScoreListNodeList[NowSelectIndex];
 		PlayerScoreListNode nodeNode = nowObj.GetComponent<PlayerScoreListNode>();
-//		nodeNode.
-//		NowSelectIndex = 0;
+		//nodeNode.SetEnableScoreInputField(false);
+
+		NowSelectIndex = number + 1;
+
+		if (NowSelectIndex >= PlayerScoreListNodeList.Count) {
+			NowSelectIndex--;
+			//GameObject obj = PlayerScoreListNodeList[NowSelectIndex];
+			//PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			//node.SetEnableScoreInputField(true);
+		} else {
+			GameObject obj = PlayerScoreListNodeList[NowSelectIndex];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			node.SetEnableScoreInputField(true);
+			node.ActivateScoreInputField();
+		}
+	}
+
+	void SetEnableScoreInputFieldList(bool enable) {
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			node.SetEnableScoreInputField(enable);
+		}
 	}
 }

@@ -23,6 +23,10 @@ public class ScoreListNode : MonoBehaviour {
 		}
 		ScoreInputField.text = text;
     }
+	
+	public string GetScoreText() {
+		return ScoreInputField.text;
+    }
 
 	// Update is called once per frame
 	void Update () {
