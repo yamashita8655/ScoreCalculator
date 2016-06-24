@@ -89,9 +89,22 @@ public class ScoreInputScene : SceneBase {
 			AddPlayerScoreListNode();
 		}
 
+		NowSelectPlayerScoreListNode = GetNowPlayerScoreListNode();
+
 		NowSelectPlayerScoreListNode.SetEnableInputField(true);
 	}
-	
+
+	private PlayerScoreListNode GetNowPlayerScoreListNode() {
+		if (PlayerScoreListNodeList.Count == 0) {
+			return null;
+		}
+
+
+		GameObject obj = PlayerScoreListNodeList[PlayerScoreListNodeList.Count-1];
+		PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+		return node;
+	}
+
 	void PlayerNameInputUpdate() {
 	}
 	
@@ -104,9 +117,9 @@ public class ScoreInputScene : SceneBase {
 		PlayerScoreListNode lastNode = lastObj.GetComponent<PlayerScoreListNode>();
 		if (string.IsNullOrEmpty(lastNode.GetName())) {
 			Destroy(lastObj);
+			PlayerScoreListNodeList.RemoveAt(PlayerScoreListNodeList.Count-1);
 		}
-		PlayerScoreListNodeList.RemoveAt(PlayerScoreListNodeList.Count-1);
-		
+
 		AddScoreInputListNode();
 	}
 
@@ -198,6 +211,10 @@ public class ScoreInputScene : SceneBase {
 		if (count == 0) {
 			// 最初の入力状態だったら、プレイヤー名入力に戻る
 			NowState = State.PlayerNameInputInit;
+			InitTotalScore();
+		} else {
+			SetEnableScoreInputFieldList(true);
+			UpdateTotalScore();
 		}
 	}
 	
@@ -217,6 +234,7 @@ public class ScoreInputScene : SceneBase {
 		}
 
 		SetEnableScoreInputFieldList(false);
+		UpdateTotalScore();
 		AddScoreInputListNode();
 	}
 	
@@ -289,6 +307,22 @@ public class ScoreInputScene : SceneBase {
 			GameObject obj = PlayerScoreListNodeList[i];
 			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
 			node.SetEnableScoreInputField(enable);
+		}
+	}
+
+	void UpdateTotalScore() {
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			node.UpdateTotalScoreText();
+		}
+	}
+
+	void InitTotalScore() {
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			node.InitTotalScoreText();
 		}
 	}
 }

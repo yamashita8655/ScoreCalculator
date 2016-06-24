@@ -23,6 +23,7 @@ public class PlayerScoreListNode : MonoBehaviour {
 		ScoreInputSceneEndEditCallback = callback;
 		ScoreInputEndEditCallback = scoreInputEndCallback;
 		Number = number;
+		InitTotalScoreText();
     }
 
 	public void SetupScoreListNode() {
@@ -123,5 +124,21 @@ public class PlayerScoreListNode : MonoBehaviour {
 
 	private void ScoreInputFieldEndEditCallback(List<string> inputStrings) {
 		ScoreInputEndEditCallback(inputStrings, Number);
+	}
+
+	public void UpdateTotalScoreText() {
+		int totalScore = 0;
+		for (int i = 0; i < ScoreListNodeList.Count; i++) {
+			GameObject obj = ScoreListNodeList[i];
+			ScoreListNode node = obj.GetComponent<ScoreListNode>();
+			int score = int.Parse(node.GetScoreText());
+			totalScore += score;
+		}
+
+		TotalText.text = totalScore.ToString();
+	}
+
+	public void InitTotalScoreText() {
+		TotalText.text = "0";
 	}
 }
