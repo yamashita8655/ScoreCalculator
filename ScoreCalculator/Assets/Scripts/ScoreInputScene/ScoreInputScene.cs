@@ -88,6 +88,8 @@ public class ScoreInputScene : SceneBase {
 		if (PlayerScoreListNodeList.Count == 0) {
 			AddPlayerScoreListNode();
 		}
+
+		NowSelectPlayerScoreListNode.SetEnableInputField(true);
 	}
 	
 	void PlayerNameInputUpdate() {
@@ -186,8 +188,17 @@ public class ScoreInputScene : SceneBase {
 	
 	// ScoreInputContainerのマウスイベント
 	public void OnClickScoreInputPrevButton() {
-		// 最初の入力状態だったら、プレイヤー名入力に戻る
-		//NowState = State.PlayerNameInputInit;
+		int count = 0;
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			count = node.RemoveScoreListNodeObject();
+		}
+
+		if (count == 0) {
+			// 最初の入力状態だったら、プレイヤー名入力に戻る
+			NowState = State.PlayerNameInputInit;
+		}
 	}
 	
 	public void OnClickScoreInputNextButton() {

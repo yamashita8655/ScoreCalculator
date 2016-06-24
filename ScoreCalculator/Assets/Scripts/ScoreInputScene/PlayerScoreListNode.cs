@@ -104,6 +104,23 @@ public class PlayerScoreListNode : MonoBehaviour {
 //		NowSelectScoreListNode.Setup(PlayerNameInputEndEditCallback);
 	}
 
+	public int RemoveScoreListNodeObject() {
+		int lastIndex = ScoreListNodeList.Count - 1;
+		GameObject lastObj = ScoreListNodeList[lastIndex];
+		Destroy(lastObj);
+		ScoreListNodeList.RemoveAt(lastIndex);
+		NowSelectScoreListNode = null;
+
+		int count = ScoreListNodeList.Count;
+
+		if (count != 0) {
+			GameObject newLastObj = ScoreListNodeList[ScoreListNodeList.Count-1];
+			NowSelectScoreListNode = newLastObj.GetComponent<ScoreListNode>();
+		}
+
+		return count;
+	}
+
 	private void ScoreInputFieldEndEditCallback(List<string> inputStrings) {
 		ScoreInputEndEditCallback(inputStrings, Number);
 	}
