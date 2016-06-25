@@ -26,6 +26,10 @@ public class PlayerScoreListNode : MonoBehaviour {
 		InitTotalScoreText();
     }
 
+	public List<GameObject> GetScoreListNodeList() {
+		return ScoreListNodeList;
+	}
+
 	public void SetupScoreListNode() {
 		NowSelectScoreListNode.Setup(ScoreInputFieldEndEditCallback);
 	}

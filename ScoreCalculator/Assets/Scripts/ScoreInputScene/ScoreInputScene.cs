@@ -120,7 +120,11 @@ public class ScoreInputScene : SceneBase {
 			PlayerScoreListNodeList.RemoveAt(PlayerScoreListNodeList.Count-1);
 		}
 
-		AddScoreInputListNode();
+		if (IsScoreListCountZero() == true) {
+			AddScoreInputListNode();
+		} else {
+			SetEnableScoreInputFieldList(true);
+		}
 	}
 
 	private void AddScoreInputListNode() {
@@ -239,7 +243,22 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickScoreInputResultButton() {
-		NowState = State.ResultInit;
+		bool findEmptyNode = false;
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			string score = node.GetScoreText();
+			if (string.IsNullOrEmpty(score) == true) {
+				findEmptyNode = true;
+				break;
+			}
+		}
+
+		if (findEmptyNode == false) {
+			SetEnableScoreInputFieldList(false);
+			UpdateTotalScore();
+			NowState = State.ResultInit;
+		}
 	}
 	
 	// ResultContainerのマウスイベント
@@ -324,5 +343,20 @@ public class ScoreInputScene : SceneBase {
 			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
 			node.InitTotalScoreText();
 		}
+	}
+
+	bool IsScoreListCountZero() {
+		bool isZero = false;
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			int count = node.GetScoreListNodeList().Count;
+			if (count == 0) {
+				isZero = true;
+				break;
+			}
+		}
+
+		return isZero;
 	}
 }
