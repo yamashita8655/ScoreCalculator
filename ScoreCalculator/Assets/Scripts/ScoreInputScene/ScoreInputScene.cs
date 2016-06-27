@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class ScoreInputScene : SceneBase {
 
@@ -216,9 +217,11 @@ public class ScoreInputScene : SceneBase {
 			// 最初の入力状態だったら、プレイヤー名入力に戻る
 			NowState = State.PlayerNameInputInit;
 			InitTotalScore();
+			InitRanking();
 		} else {
 			SetEnableScoreInputFieldList(true);
 			UpdateTotalScore();
+			UpdateRanking();
 		}
 	}
 	
@@ -239,6 +242,7 @@ public class ScoreInputScene : SceneBase {
 
 		SetEnableScoreInputFieldList(false);
 		UpdateTotalScore();
+		UpdateRanking();
 		AddScoreInputListNode();
 	}
 	
@@ -257,6 +261,7 @@ public class ScoreInputScene : SceneBase {
 		if (findEmptyNode == false) {
 			SetEnableScoreInputFieldList(false);
 			UpdateTotalScore();
+			UpdateRanking();
 			NowState = State.ResultInit;
 		}
 	}
@@ -273,6 +278,11 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickResultClearRestartButton() {
+		//NowState = State.PlayerNameInputInit;
+
+		//for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+		//}
+		Initialize();
 	}
 
 
@@ -358,5 +368,52 @@ public class ScoreInputScene : SceneBase {
 		}
 
 		return isZero;
+	}
+
+	void UpdateRanking() {
+		//List<PlayerScoreListNode> sortList = new List<PlayerScoreListNode>(PlayerScoreListNodeList);
+		List<PlayerScoreListNode> sortList = new List<PlayerScoreListNode>();
+
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			sortList.Add(PlayerScoreListNodeList[i].GetComponent<PlayerScoreListNode>());
+		}
+
+		// ランキングソートするリストに、ノードの番号とスコアを入れておく
+		// スコアでソートする
+		// ノードの番号で、どのノードが何位なのかわかる。
+		sortList.Sort(SortByScore);
+
+		int rank = 1;
+		int prevScore = 0;
+		int sameCount = 0;
+		for (int i = 0; i < sortList.Count; i++) {
+			PlayerScoreListNode node = sortList[i];
+			int score = int.Parse(node.GetTotalScoreText());
+			if (i == 0) {
+				prevScore = score;
+				node.SetRankText(rank.ToString());
+			} else {
+				if (score == prevScore) {
+					node.SetRankText(rank.ToString());
+					sameCount++;
+				} else {
+					rank = (rank + 1) + sameCount;
+					node.SetRankText(rank.ToString());
+					sameCount = 0;
+					prevScore = score;
+				}
+			}
+		}
+	}
+
+	private int SortByScore(PlayerScoreListNode left, PlayerScoreListNode right) {
+		return int.Parse(right.GetTotalScoreText()) - int.Parse(left.GetTotalScoreText());
+	}
+	
+	void InitRanking() {
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			PlayerScoreListNode node = PlayerScoreListNodeList[i].GetComponent<PlayerScoreListNode>();
+			node.SetRankText("0");
+		}
 	}
 }

@@ -26,6 +26,10 @@ public class PlayerScoreListNode : MonoBehaviour {
 		InitTotalScoreText();
     }
 
+	public int GetNumber() {
+		return Number;
+	}
+
 	public List<GameObject> GetScoreListNodeList() {
 		return ScoreListNodeList;
 	}
@@ -40,6 +44,10 @@ public class PlayerScoreListNode : MonoBehaviour {
 
     public void SetScoreText(string score) {
 		NowSelectScoreListNode.SetScoreText(score);
+    }
+    
+	public void SetRankText(string rank) {
+		RankText.text = rank;
     }
     
 	public string GetName() {
@@ -144,5 +152,9 @@ public class PlayerScoreListNode : MonoBehaviour {
 
 	public void InitTotalScoreText() {
 		TotalText.text = "0";
+	}
+	
+	public string GetTotalScoreText() {
+		return TotalText.text;
 	}
 }
