@@ -5,10 +5,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class PlayerScoreListNode : MonoBehaviour {
-    [SerializeField] InputField NameInputField;
-    [SerializeField] Text TotalText;
-    [SerializeField] Text RankText;
-    [SerializeField] ScrollRect ScoreScrollRext;
+	[SerializeField] InputField NameInputField;
+	[SerializeField] Text TotalText;
+	[SerializeField] Text RankText;
+	[SerializeField] ScrollRect ScoreScrollRext;
 	[SerializeField] GameObject	ScoreListNodeObject;
 
 	Action<List<string>> ScoreInputSceneEndEditCallback = null;
@@ -24,7 +24,8 @@ public class PlayerScoreListNode : MonoBehaviour {
 		ScoreInputEndEditCallback = scoreInputEndCallback;
 		Number = number;
 		InitTotalScoreText();
-    }
+		InitRankingText();
+	}
 
 	public int GetNumber() {
 		return Number;
@@ -42,21 +43,21 @@ public class PlayerScoreListNode : MonoBehaviour {
 		NameInputField.text = name;
 	}
 
-    public void SetScoreText(string score) {
+	public void SetScoreText(string score) {
 		NowSelectScoreListNode.SetScoreText(score);
-    }
-    
+	}
+	
 	public void SetRankText(string rank) {
 		RankText.text = rank;
-    }
-    
+	}
+	
 	public string GetName() {
-        return NameInputField.text;
-    }
-    
+		return NameInputField.text;
+	}
+	
 	public string GetScoreText() {
 		return NowSelectScoreListNode.GetScoreText();
-    }
+	}
 
 	public void ActivateInputField() {
 		NameInputField.ActivateInputField();
@@ -133,6 +134,15 @@ public class PlayerScoreListNode : MonoBehaviour {
 
 		return count;
 	}
+	
+	public void RemoveAllScoreListNodeObject() {
+		for (int i = 0; i < ScoreListNodeList.Count; i++) {
+			GameObject obj = ScoreListNodeList[i];
+			Destroy(obj);
+		}
+		ScoreListNodeList.Clear();
+		NowSelectScoreListNode = null;
+	}
 
 	private void ScoreInputFieldEndEditCallback(List<string> inputStrings) {
 		ScoreInputEndEditCallback(inputStrings, Number);
@@ -156,5 +166,9 @@ public class PlayerScoreListNode : MonoBehaviour {
 	
 	public string GetTotalScoreText() {
 		return TotalText.text;
+	}
+	
+	public void InitRankingText() {
+		RankText.text = "0";
 	}
 }

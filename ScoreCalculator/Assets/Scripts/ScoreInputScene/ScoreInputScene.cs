@@ -91,8 +91,10 @@ public class ScoreInputScene : SceneBase {
 		}
 
 		NowSelectPlayerScoreListNode = GetNowPlayerScoreListNode();
-
 		NowSelectPlayerScoreListNode.SetEnableInputField(true);
+
+		InitTotalScore();
+		InitRanking();
 	}
 
 	private PlayerScoreListNode GetNowPlayerScoreListNode() {
@@ -275,6 +277,12 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickResultKeepRestartButton() {
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			node.RemoveAllScoreListNodeObject();
+		}
+		NowState = State.PlayerNameInputInit;
 	}
 	
 	public void OnClickResultClearRestartButton() {
