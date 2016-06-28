@@ -13,7 +13,8 @@ public class ScoreInputScene : SceneBase {
 	[SerializeField]	GameObject	ResultContainer;
 	[SerializeField]	GameObject	PlayerScoreListNode;
 	[SerializeField]	ScrollRect	BaseScrollView;
-	
+	[SerializeField]	ScrollRect	TopScrollView;// とりあえず仮
+
 	List<GameObject>	PlayerScoreListNodeList = new List<GameObject>();
 	PlayerScoreListNode	NowSelectPlayerScoreListNode = null;
 	int					NowSelectIndex = 0;
@@ -463,5 +464,10 @@ public class ScoreInputScene : SceneBase {
 		} else if (NowRuleConfing == RuleConfigState.AscendingOrder) {
 			header.SetRuleConfigText("少ない方が1位");
 		}
+	}
+
+	public void TestScrollValueChange(Vector2 pos) {
+		Debug.Log("ValueChange");
+		Debug.Log(pos);
 	}
 }
