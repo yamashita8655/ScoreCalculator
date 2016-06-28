@@ -6,6 +6,7 @@ public class HeaderContainer : MonoBehaviour {
 
 	[SerializeField]	Button	TitleButton; 
 	[SerializeField]	Button	RuleConfigButton; 
+	[SerializeField]	Text	RuleConfigText; 
 
 //	// Use this for initialization
 //	void Start () {
@@ -18,6 +19,10 @@ public class HeaderContainer : MonoBehaviour {
 //	}
 	
 	public void Init() {
+	}
+	
+	public void SetRuleConfigText(string text) {
+		RuleConfigText.text = text;
 	}
 	
 }

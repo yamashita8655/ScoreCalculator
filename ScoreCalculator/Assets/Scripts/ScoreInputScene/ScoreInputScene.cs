@@ -34,8 +34,14 @@ public class ScoreInputScene : SceneBase {
 		ResultInit,
 		ResultUpdate,
 	}
+	
+	enum RuleConfigState {
+		DescendingOrder = 0,
+		AscendingOrder,
+	}
 
 	State NowState = State.PlayerNameInputInit;
+	RuleConfigState NowRuleConfing = RuleConfigState.DescendingOrder;
 	
 	//[SerializeField]	Button	StartCulcButton; 
 	//[SerializeField]	Button	DataCheckButton; 
@@ -64,6 +70,7 @@ public class ScoreInputScene : SceneBase {
 			Destroy(PlayerScoreListNodeList[i]);
 		}
 		PlayerScoreListNodeList.Clear();
+		UpdateRuleConfigString();
 	}
 
 	// Update is called once per frame
@@ -179,6 +186,17 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickHeaderRuleConfigButton() {
+		// ここの条件設定などは、後でダイアログか何かで選択した結果に変更すると思う
+		if (NowRuleConfing == RuleConfigState.DescendingOrder) {
+			NowRuleConfing = RuleConfigState.AscendingOrder;
+		} else {
+			NowRuleConfing = RuleConfigState.DescendingOrder;
+		}
+		UpdateRuleConfigString();
+		
+		if (NowState != State.PlayerNameInputUpdate) {
+			UpdateRanking();
+		}
 	}
 
 	// PlayerNameInputContainerのマウスイベント
@@ -389,7 +407,13 @@ public class ScoreInputScene : SceneBase {
 		// ランキングソートするリストに、ノードの番号とスコアを入れておく
 		// スコアでソートする
 		// ノードの番号で、どのノードが何位なのかわかる。
-		sortList.Sort(SortByScore);
+		//sortList.Sort(SortByScoreDescendingOrder);
+
+		if (NowRuleConfing == RuleConfigState.DescendingOrder) {
+			sortList.Sort(SortByScoreDescendingOrder);
+		} else {
+			sortList.Sort(SortByScoreAscendingOrder);
+		}
 
 		int rank = 1;
 		int prevScore = 0;
@@ -414,14 +438,30 @@ public class ScoreInputScene : SceneBase {
 		}
 	}
 
-	private int SortByScore(PlayerScoreListNode left, PlayerScoreListNode right) {
+	// 降順(点数が大きい順)
+	private int SortByScoreDescendingOrder(PlayerScoreListNode left, PlayerScoreListNode right) {
 		return int.Parse(right.GetTotalScoreText()) - int.Parse(left.GetTotalScoreText());
+	}
+	
+	// 昇順(点数が小さい順)
+	private int SortByScoreAscendingOrder(PlayerScoreListNode left, PlayerScoreListNode right) {
+		return int.Parse(left.GetTotalScoreText()) - int.Parse(right.GetTotalScoreText());
 	}
 	
 	void InitRanking() {
 		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
 			PlayerScoreListNode node = PlayerScoreListNodeList[i].GetComponent<PlayerScoreListNode>();
 			node.SetRankText("0");
+		}
+	}
+
+	private void UpdateRuleConfigString() {
+		HeaderContainer header = HeaderContainer.GetComponent<HeaderContainer>();
+
+		if (NowRuleConfing == RuleConfigState.DescendingOrder) {
+			header.SetRuleConfigText("多い方が1位");
+		} else if (NowRuleConfing == RuleConfigState.AscendingOrder) {
+			header.SetRuleConfigText("少ない方が1位");
 		}
 	}
 }
