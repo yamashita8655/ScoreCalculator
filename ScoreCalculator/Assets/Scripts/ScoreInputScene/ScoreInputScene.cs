@@ -12,12 +12,16 @@ public class ScoreInputScene : SceneBase {
 	[SerializeField]	GameObject	ScoreInputContainer;
 	[SerializeField]	GameObject	ResultContainer;
 	[SerializeField]	GameObject	PlayerScoreListNode;
+	[SerializeField]	GameObject	TurnLabelListNode;
+	[SerializeField]	GameObject	TopListNode;
 	[SerializeField]	ScrollRect	BaseScrollView;
 	[SerializeField]	ScrollRect	TopScrollView;// とりあえず仮
 
 	List<GameObject>	PlayerScoreListNodeList = new List<GameObject>();
 	PlayerScoreListNode	NowSelectPlayerScoreListNode = null;
 	int					NowSelectIndex = 0;
+	
+	List<GameObject>	TurnLabelListNodeList = new List<GameObject>();
 
 	enum ToggleType {
 		PlayerNameInput,
@@ -71,6 +75,13 @@ public class ScoreInputScene : SceneBase {
 			Destroy(PlayerScoreListNodeList[i]);
 		}
 		PlayerScoreListNodeList.Clear();
+		
+		for (int i = 0; i < TurnLabelListNodeList.Count; i++) {
+			TurnLabelListNodeList[i].transform.parent = null;
+			Destroy(TurnLabelListNodeList[i]);
+		}
+		TurnLabelListNodeList.Clear();
+		
 		UpdateRuleConfigString();
 	}
 
@@ -133,6 +144,7 @@ public class ScoreInputScene : SceneBase {
 
 		if (IsScoreListCountZero() == true) {
 			AddScoreInputListNode();
+			AddTurnLabelListNode();
 		} else {
 			SetEnableScoreInputFieldList(true);
 		}
@@ -233,6 +245,13 @@ public class ScoreInputScene : SceneBase {
 			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
 			count = node.RemoveScoreListNodeObject();
 		}
+		
+		int lastIndex = TurnLabelListNodeList.Count-1;
+		if (TurnLabelListNodeList.Count != 0) {
+			GameObject obj = TurnLabelListNodeList[lastIndex];
+			TurnLabelListNodeList.RemoveAt(lastIndex);
+			Destroy(obj);
+		}
 
 		if (count == 0) {
 			// 最初の入力状態だったら、プレイヤー名入力に戻る
@@ -265,6 +284,7 @@ public class ScoreInputScene : SceneBase {
 		UpdateTotalScore();
 		UpdateRanking();
 		AddScoreInputListNode();
+		AddTurnLabelListNode();
 	}
 	
 	public void OnClickScoreInputResultButton() {
@@ -301,17 +321,29 @@ public class ScoreInputScene : SceneBase {
 			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
 			node.RemoveAllScoreListNodeObject();
 		}
+		for (int i = 0; i < TurnLabelListNodeList.Count; i++) {
+			TurnLabelListNodeList[i].transform.parent = null;
+			Destroy(TurnLabelListNodeList[i]);
+		}
+		TurnLabelListNodeList.Clear();
+
 		NowState = State.PlayerNameInputInit;
 	}
 	
 	public void OnClickResultClearRestartButton() {
-		//NowState = State.PlayerNameInputInit;
-
-		//for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
-		//}
 		Initialize();
 	}
+	
+	private void AddTurnLabelListNode() {
+		GameObject node = Instantiate(TurnLabelListNode);
+		node.transform.SetParent(TopScrollView.content);
+		node.transform.position = Vector3.zero;
+		node.transform.localScale = Vector3.one;
 
+		TurnLabelListNodeList.Add(node);
+		TurnListNode turnNode = node.GetComponent<TurnListNode>();
+		turnNode.Setup();
+	}
 
 	private void AddPlayerScoreListNode() {
 		GameObject node = Instantiate(PlayerScoreListNode);
