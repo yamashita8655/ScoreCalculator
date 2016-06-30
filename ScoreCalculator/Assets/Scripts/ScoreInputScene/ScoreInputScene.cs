@@ -239,6 +239,10 @@ public class ScoreInputScene : SceneBase {
 	
 	// ScoreInputContainerのマウスイベント
 	public void OnClickScoreInputPrevButton() {
+		StartCoroutine(ClickScoreInputPrevButton());
+	}
+
+	private IEnumerator ClickScoreInputPrevButton() {
 		int count = 0;
 		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
 			GameObject obj = PlayerScoreListNodeList[i];
@@ -262,10 +266,18 @@ public class ScoreInputScene : SceneBase {
 			SetEnableScoreInputFieldList(true);
 			UpdateTotalScore();
 			UpdateRanking();
+
+			yield return null;// スクロールビューへの反映を待ちたいので1フレーム遅らせる
+
+			OnScrollValueChange(Vector2.one);
 		}
 	}
 	
 	public void OnClickScoreInputNextButton() {
+		StartCoroutine(ClickScoreInputNextButton());
+	}
+
+	private IEnumerator ClickScoreInputNextButton() {
 		bool findEnpty = false;
 		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
 			GameObject obj = PlayerScoreListNodeList[i];
@@ -277,7 +289,7 @@ public class ScoreInputScene : SceneBase {
 		}
 
 		if (findEnpty == true) {
-			return;
+			yield break;
 		}
 
 		SetEnableScoreInputFieldList(false);
@@ -285,6 +297,10 @@ public class ScoreInputScene : SceneBase {
 		UpdateRanking();
 		AddScoreInputListNode();
 		AddTurnLabelListNode();
+
+		yield return null;// スクロールにアイテムを適用させるために、1フレーム遅らせる
+
+		OnScrollValueChange(Vector2.one);
 	}
 	
 	public void OnClickScoreInputResultButton() {
@@ -341,8 +357,10 @@ public class ScoreInputScene : SceneBase {
 		node.transform.localScale = Vector3.one;
 
 		TurnLabelListNodeList.Add(node);
+		int count = TurnLabelListNodeList.Count;
 		TurnListNode turnNode = node.GetComponent<TurnListNode>();
 		turnNode.Setup();
+		turnNode.SetTurnText("Turn" + count.ToString());
 	}
 
 	private void AddPlayerScoreListNode() {
@@ -353,7 +371,7 @@ public class ScoreInputScene : SceneBase {
 
 		PlayerScoreListNodeList.Add(node);
 		NowSelectPlayerScoreListNode = node.GetComponent<PlayerScoreListNode>();
-		NowSelectPlayerScoreListNode.Setup(PlayerNameInputEndEditCallback, ScoreInputEndEditCallback, PlayerScoreListNodeList.Count-1);
+		NowSelectPlayerScoreListNode.Setup(PlayerNameInputEndEditCallback, ScoreInputEndEditCallback, PlayerScoreListNodeList.Count-1, OnScrollValueChange);
 	}
 
 	void PlayerNameInputEndEditCallback(List<string> inputStrings) {
@@ -498,8 +516,14 @@ public class ScoreInputScene : SceneBase {
 		}
 	}
 
-	public void TestScrollValueChange(Vector2 pos) {
+	public void OnScrollValueChange(Vector2 pos) {
 		Debug.Log("ValueChange");
 		Debug.Log(pos);
+
+		TopScrollView.normalizedPosition = pos;
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			PlayerScoreListNode node = PlayerScoreListNodeList[i].GetComponent<PlayerScoreListNode>();
+			node.UpdateScrollValue(pos);
+		}
 	}
 }

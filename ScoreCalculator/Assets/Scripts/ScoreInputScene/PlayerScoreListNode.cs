@@ -8,7 +8,7 @@ public class PlayerScoreListNode : MonoBehaviour {
 	[SerializeField] InputField NameInputField;
 	[SerializeField] Text TotalText;
 	[SerializeField] Text RankText;
-	[SerializeField] ScrollRect ScoreScrollRext;
+	[SerializeField] ScrollRect ScoreScrollRect;
 	[SerializeField] GameObject	ScoreListNodeObject;
 
 	Action<List<string>> ScoreInputSceneEndEditCallback = null;
@@ -18,10 +18,13 @@ public class PlayerScoreListNode : MonoBehaviour {
 	ScoreListNode		NowSelectScoreListNode = null;
 
 	int					Number = 0;
+	
+	Action<Vector2> ScrollValueChangeCallback = null;
 
-	public void Setup(Action<List<string>> callback, Action<List<string>, int> scoreInputEndCallback, int number) {
+	public void Setup(Action<List<string>> callback, Action<List<string>, int> scoreInputEndCallback, int number, Action<Vector2> scrollCallback) {
 		ScoreInputSceneEndEditCallback = callback;
 		ScoreInputEndEditCallback = scoreInputEndCallback;
+		ScrollValueChangeCallback = scrollCallback;
 		Number = number;
 		InitTotalScoreText();
 		InitRankingText();
@@ -108,7 +111,7 @@ public class PlayerScoreListNode : MonoBehaviour {
 
 	private void AddScoreListNodeObject() {
 		GameObject node = Instantiate(ScoreListNodeObject);
-		node.transform.SetParent(ScoreScrollRext.content);
+		node.transform.SetParent(ScoreScrollRect.content);
 		node.transform.position = Vector3.zero;
 		node.transform.localScale = Vector3.one;
 
@@ -170,5 +173,13 @@ public class PlayerScoreListNode : MonoBehaviour {
 	
 	public void InitRankingText() {
 		RankText.text = "0";
+	}
+
+	public void UpdateScrollValue(Vector2 pos) {
+		ScoreScrollRect.normalizedPosition = pos;
+	}
+	
+	public void OnScrollValueChange(Vector2 pos) {
+		ScrollValueChangeCallback(pos);
 	}
 }
