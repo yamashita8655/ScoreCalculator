@@ -16,6 +16,7 @@ public class ScoreInputScene : SceneBase {
 	[SerializeField]	GameObject	TopListNode;
 	[SerializeField]	ScrollRect	BaseScrollView;
 	[SerializeField]	ScrollRect	TopScrollView;// とりあえず仮
+	[SerializeField]	GameObject	ScoreInputer;
 
 	List<GameObject>	PlayerScoreListNodeList = new List<GameObject>();
 	PlayerScoreListNode	NowSelectPlayerScoreListNode = null;
@@ -83,6 +84,8 @@ public class ScoreInputScene : SceneBase {
 		TurnLabelListNodeList.Clear();
 		
 		UpdateRuleConfigString();
+
+		ScoreInputer.SetActive(false);
 	}
 
 	// Update is called once per frame
@@ -147,6 +150,7 @@ public class ScoreInputScene : SceneBase {
 			AddTurnLabelListNode();
 		} else {
 			SetEnableScoreInputFieldList(true);
+			SetClickableTextListEnable(true);
 		}
 	}
 
@@ -264,6 +268,7 @@ public class ScoreInputScene : SceneBase {
 			InitRanking();
 		} else {
 			SetEnableScoreInputFieldList(true);
+			SetClickableTextListEnable(true);
 			UpdateTotalScore();
 			UpdateRanking();
 
@@ -293,6 +298,7 @@ public class ScoreInputScene : SceneBase {
 		}
 
 		SetEnableScoreInputFieldList(false);
+		SetClickableTextListEnable(false);
 		UpdateTotalScore();
 		UpdateRanking();
 		AddScoreInputListNode();
@@ -317,6 +323,7 @@ public class ScoreInputScene : SceneBase {
 
 		if (findEmptyNode == false) {
 			SetEnableScoreInputFieldList(false);
+			SetClickableTextListEnable(false);
 			UpdateTotalScore();
 			UpdateRanking();
 			NowState = State.ResultInit;
@@ -371,7 +378,7 @@ public class ScoreInputScene : SceneBase {
 
 		PlayerScoreListNodeList.Add(node);
 		NowSelectPlayerScoreListNode = node.GetComponent<PlayerScoreListNode>();
-		NowSelectPlayerScoreListNode.Setup(PlayerNameInputEndEditCallback, ScoreInputEndEditCallback, PlayerScoreListNodeList.Count-1, OnScrollValueChange);
+		NowSelectPlayerScoreListNode.Setup(PlayerNameInputEndEditCallback, ScoreInputEndEditCallback, PlayerScoreListNodeList.Count-1, OnScrollValueChange, OpenScoreInputer);
 	}
 
 	void PlayerNameInputEndEditCallback(List<string> inputStrings) {
@@ -413,6 +420,14 @@ public class ScoreInputScene : SceneBase {
 			GameObject obj = PlayerScoreListNodeList[i];
 			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
 			node.SetEnableScoreInputField(enable);
+		}
+	}
+	
+	void SetClickableTextListEnable(bool enable) {
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			node.SetClickableTextEnable(enable);
 		}
 	}
 
@@ -525,5 +540,10 @@ public class ScoreInputScene : SceneBase {
 			PlayerScoreListNode node = PlayerScoreListNodeList[i].GetComponent<PlayerScoreListNode>();
 			node.UpdateScrollValue(pos);
 		}
+	}
+
+	private void OpenScoreInputer(Text outputText) {
+		ScoreInputer scoreInputer = ScoreInputer.GetComponent<ScoreInputer>();
+		scoreInputer.Open(outputText);
 	}
 }

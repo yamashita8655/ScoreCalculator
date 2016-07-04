@@ -1,16 +1,22 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
 public class ScoreListNode : MonoBehaviour {
     [SerializeField] InputField ScoreInputField;
+    [SerializeField] Text ScoreInputText;
+    [SerializeField] EventTrigger ScoreInputEventTrigger;
 
 	Action<List<string>> ScoreInputSceneEndEditCallback = null;
+	
+	Action<Text> OpenScoreInputer = null;
 
-	public void Setup(Action<List<string>> scoreInputEndEditCallback) {
+	public void Setup(Action<List<string>> scoreInputEndEditCallback, Action<Text> openScoreInputer) {
 		ScoreInputSceneEndEditCallback = scoreInputEndEditCallback;
+		OpenScoreInputer = openScoreInputer;
     }
 	
 	public void ActivateInputField() {
@@ -25,7 +31,7 @@ public class ScoreListNode : MonoBehaviour {
     }
 	
 	public string GetScoreText() {
-		return ScoreInputField.text;
+		return ScoreInputText.text;
     }
 
 	// Update is called once per frame
@@ -57,5 +63,13 @@ public class ScoreListNode : MonoBehaviour {
 
 	public void SetEnableInputField(bool enable) {
 		ScoreInputField.enabled = enable;
+	}
+
+	public void OnClickClickableText() {
+		OpenScoreInputer(ScoreInputText);
+	}
+
+	public void SetClickableTextEnable(bool enable) {
+		ScoreInputEventTrigger.enabled = enable;
 	}
 }

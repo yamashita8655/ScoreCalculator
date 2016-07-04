@@ -20,11 +20,14 @@ public class PlayerScoreListNode : MonoBehaviour {
 	int					Number = 0;
 	
 	Action<Vector2> ScrollValueChangeCallback = null;
+	
+	Action<Text> OpenScoreInputerCallback = null;
 
-	public void Setup(Action<List<string>> callback, Action<List<string>, int> scoreInputEndCallback, int number, Action<Vector2> scrollCallback) {
+	public void Setup(Action<List<string>> callback, Action<List<string>, int> scoreInputEndCallback, int number, Action<Vector2> scrollCallback, Action<Text> openScoreInputerCallback) {
 		ScoreInputSceneEndEditCallback = callback;
 		ScoreInputEndEditCallback = scoreInputEndCallback;
 		ScrollValueChangeCallback = scrollCallback;
+		OpenScoreInputerCallback = openScoreInputerCallback;
 		Number = number;
 		InitTotalScoreText();
 		InitRankingText();
@@ -39,7 +42,7 @@ public class PlayerScoreListNode : MonoBehaviour {
 	}
 
 	public void SetupScoreListNode() {
-		NowSelectScoreListNode.Setup(ScoreInputFieldEndEditCallback);
+		NowSelectScoreListNode.Setup(ScoreInputFieldEndEditCallback, OpenScoreInputerCallback);
 	}
 
 	public void SetName(string name) {
@@ -107,6 +110,10 @@ public class PlayerScoreListNode : MonoBehaviour {
 	
 	public void SetEnableScoreInputField(bool enable) {
 		NowSelectScoreListNode.SetEnableInputField(enable);
+	}
+	
+	public void SetClickableTextEnable(bool enable) {
+		NowSelectScoreListNode.SetClickableTextEnable(enable);
 	}
 
 	private void AddScoreListNodeObject() {
