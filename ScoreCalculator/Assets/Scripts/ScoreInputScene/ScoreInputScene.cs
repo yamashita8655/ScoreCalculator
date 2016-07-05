@@ -20,8 +20,7 @@ public class ScoreInputScene : SceneBase {
 
 	List<GameObject>	PlayerScoreListNodeList = new List<GameObject>();
 	PlayerScoreListNode	NowSelectPlayerScoreListNode = null;
-	int					NowSelectIndex = 0;
-	
+
 	List<GameObject>	TurnLabelListNodeList = new List<GameObject>();
 
 	enum ToggleType {
@@ -149,7 +148,6 @@ public class ScoreInputScene : SceneBase {
 			AddScoreInputListNode();
 			AddTurnLabelListNode();
 		} else {
-			SetEnableScoreInputFieldList(true);
 			SetClickableTextListEnable(true);
 		}
 	}
@@ -162,14 +160,6 @@ public class ScoreInputScene : SceneBase {
 			node.AddScoreListNode();
 			node.SetupScoreListNode();
 		}
-
-		NowSelectIndex = 0;
-		
-		// 最初のノードだけ、入力可能にしておく
-		GameObject firstObj = PlayerScoreListNodeList[NowSelectIndex];
-		PlayerScoreListNode firstNode = firstObj.GetComponent<PlayerScoreListNode>();
-		firstNode.SetEnableScoreInputField(true);
-		firstNode.ActivateScoreInputField();
 	}
 	
 	void ScoreInputUpdate() {
@@ -267,7 +257,6 @@ public class ScoreInputScene : SceneBase {
 			InitTotalScore();
 			InitRanking();
 		} else {
-			SetEnableScoreInputFieldList(true);
 			SetClickableTextListEnable(true);
 			UpdateTotalScore();
 			UpdateRanking();
@@ -297,7 +286,6 @@ public class ScoreInputScene : SceneBase {
 			yield break;
 		}
 
-		SetEnableScoreInputFieldList(false);
 		SetClickableTextListEnable(false);
 		UpdateTotalScore();
 		UpdateRanking();
@@ -322,7 +310,6 @@ public class ScoreInputScene : SceneBase {
 		}
 
 		if (findEmptyNode == false) {
-			SetEnableScoreInputFieldList(false);
 			SetClickableTextListEnable(false);
 			UpdateTotalScore();
 			UpdateRanking();
@@ -378,7 +365,7 @@ public class ScoreInputScene : SceneBase {
 
 		PlayerScoreListNodeList.Add(node);
 		NowSelectPlayerScoreListNode = node.GetComponent<PlayerScoreListNode>();
-		NowSelectPlayerScoreListNode.Setup(PlayerNameInputEndEditCallback, ScoreInputEndEditCallback, PlayerScoreListNodeList.Count-1, OnScrollValueChange, OpenScoreInputer);
+		NowSelectPlayerScoreListNode.Setup(PlayerNameInputEndEditCallback, PlayerScoreListNodeList.Count-1, OnScrollValueChange, OpenScoreInputer);
 	}
 
 	void PlayerNameInputEndEditCallback(List<string> inputStrings) {
@@ -392,35 +379,6 @@ public class ScoreInputScene : SceneBase {
 		}
 
 		NowSelectPlayerScoreListNode.ActivateInputField();
-	}
-
-	void ScoreInputEndEditCallback(List<string> inputStrings, int number) {
-		Debug.Log(number);
-		GameObject nowObj = PlayerScoreListNodeList[NowSelectIndex];
-		PlayerScoreListNode nodeNode = nowObj.GetComponent<PlayerScoreListNode>();
-		//nodeNode.SetEnableScoreInputField(false);
-
-		NowSelectIndex = number + 1;
-
-		if (NowSelectIndex >= PlayerScoreListNodeList.Count) {
-			NowSelectIndex--;
-			//GameObject obj = PlayerScoreListNodeList[NowSelectIndex];
-			//PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
-			//node.SetEnableScoreInputField(true);
-		} else {
-			GameObject obj = PlayerScoreListNodeList[NowSelectIndex];
-			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
-			node.SetEnableScoreInputField(true);
-			node.ActivateScoreInputField();
-		}
-	}
-
-	void SetEnableScoreInputFieldList(bool enable) {
-		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
-			GameObject obj = PlayerScoreListNodeList[i];
-			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
-			node.SetEnableScoreInputField(enable);
-		}
 	}
 	
 	void SetClickableTextListEnable(bool enable) {

@@ -12,7 +12,6 @@ public class PlayerScoreListNode : MonoBehaviour {
 	[SerializeField] GameObject	ScoreListNodeObject;
 
 	Action<List<string>> ScoreInputSceneEndEditCallback = null;
-	Action<List<string>, int> ScoreInputEndEditCallback = null;
 
 	List<GameObject>	ScoreListNodeList = new List<GameObject>();
 	ScoreListNode		NowSelectScoreListNode = null;
@@ -23,9 +22,8 @@ public class PlayerScoreListNode : MonoBehaviour {
 	
 	Action<Text> OpenScoreInputerCallback = null;
 
-	public void Setup(Action<List<string>> callback, Action<List<string>, int> scoreInputEndCallback, int number, Action<Vector2> scrollCallback, Action<Text> openScoreInputerCallback) {
+	public void Setup(Action<List<string>> callback, int number, Action<Vector2> scrollCallback, Action<Text> openScoreInputerCallback) {
 		ScoreInputSceneEndEditCallback = callback;
-		ScoreInputEndEditCallback = scoreInputEndCallback;
 		ScrollValueChangeCallback = scrollCallback;
 		OpenScoreInputerCallback = openScoreInputerCallback;
 		Number = number;
@@ -42,15 +40,11 @@ public class PlayerScoreListNode : MonoBehaviour {
 	}
 
 	public void SetupScoreListNode() {
-		NowSelectScoreListNode.Setup(ScoreInputFieldEndEditCallback, OpenScoreInputerCallback);
+		NowSelectScoreListNode.Setup(OpenScoreInputerCallback);
 	}
 
 	public void SetName(string name) {
 		NameInputField.text = name;
-	}
-
-	public void SetScoreText(string score) {
-		NowSelectScoreListNode.SetScoreText(score);
 	}
 	
 	public void SetRankText(string rank) {
@@ -67,10 +61,6 @@ public class PlayerScoreListNode : MonoBehaviour {
 
 	public void ActivateInputField() {
 		NameInputField.ActivateInputField();
-	}
-	
-	public void ActivateScoreInputField() {
-		NowSelectScoreListNode.ActivateInputField();
 	}
 
 	public void AddScoreListNode() {
@@ -108,10 +98,6 @@ public class PlayerScoreListNode : MonoBehaviour {
 		NameInputField.enabled = enable;
 	}
 	
-	public void SetEnableScoreInputField(bool enable) {
-		NowSelectScoreListNode.SetEnableInputField(enable);
-	}
-	
 	public void SetClickableTextEnable(bool enable) {
 		NowSelectScoreListNode.SetClickableTextEnable(enable);
 	}
@@ -124,7 +110,6 @@ public class PlayerScoreListNode : MonoBehaviour {
 
 		ScoreListNodeList.Add(node);
 		NowSelectScoreListNode = node.GetComponent<ScoreListNode>();
-		NowSelectScoreListNode.SetEnableInputField(false);
 //		NowSelectScoreListNode.Setup(PlayerNameInputEndEditCallback);
 	}
 
@@ -152,10 +137,6 @@ public class PlayerScoreListNode : MonoBehaviour {
 		}
 		ScoreListNodeList.Clear();
 		NowSelectScoreListNode = null;
-	}
-
-	private void ScoreInputFieldEndEditCallback(List<string> inputStrings) {
-		ScoreInputEndEditCallback(inputStrings, Number);
 	}
 
 	public void UpdateTotalScoreText() {
