@@ -17,9 +17,11 @@ public class ScoreInputScene : SceneBase {
 	[SerializeField]	ScrollRect	BaseScrollView;
 	[SerializeField]	ScrollRect	TopScrollView;// とりあえず仮
 	[SerializeField]	GameObject	ScoreInputer;
+	
+	private int	PlayerCountMax = 12;
+	private int	TurnCountMax = 999;
 
 	List<GameObject>	PlayerScoreListNodeList = new List<GameObject>();
-	PlayerScoreListNode	NowSelectPlayerScoreListNode = null;
 
 	List<GameObject>	TurnLabelListNodeList = new List<GameObject>();
 
@@ -107,12 +109,6 @@ public class ScoreInputScene : SceneBase {
 	void PlayerNameInputInit() {
 		ToggleContainer(ToggleType.PlayerNameInput);
 		NowState = State.PlayerNameInputUpdate;
-		if (PlayerScoreListNodeList.Count == 0) {
-			AddPlayerScoreListNode();
-		}
-
-		NowSelectPlayerScoreListNode = GetNowPlayerScoreListNode();
-		NowSelectPlayerScoreListNode.SetEnableInputField(true);
 
 		InitTotalScore();
 		InitRanking();
@@ -135,14 +131,6 @@ public class ScoreInputScene : SceneBase {
 	void ScoreInputInit() {
 		ToggleContainer(ToggleType.ScoreInput);
 		NowState = State.ScoreInputUpdate;
-
-		// 最後のリストが空の場合があるので、確認する
-		GameObject lastObj = PlayerScoreListNodeList[PlayerScoreListNodeList.Count-1];
-		PlayerScoreListNode lastNode = lastObj.GetComponent<PlayerScoreListNode>();
-		if (string.IsNullOrEmpty(lastNode.GetName())) {
-			Destroy(lastObj);
-			PlayerScoreListNodeList.RemoveAt(PlayerScoreListNodeList.Count-1);
-		}
 
 		if (IsScoreListCountZero() == true) {
 			AddScoreInputListNode();
@@ -207,28 +195,45 @@ public class ScoreInputScene : SceneBase {
 	}
 
 	// PlayerNameInputContainerのマウスイベント
-	public void OnClickPlayerNameInputPrevButton() {
-		if (PlayerScoreListNodeList.Count == 1) {
+	public void OnClickPlayerNameInputDeleteButton() {
+		if (PlayerScoreListNodeList.Count <= 0) {
 			return;
 		}
 		
 		GameObject nowSelectObj = PlayerScoreListNodeList[PlayerScoreListNodeList.Count-1];
 		PlayerScoreListNodeList.RemoveAt(PlayerScoreListNodeList.Count-1);
-		if (NowSelectPlayerScoreListNode != null) {
-			NowSelectPlayerScoreListNode.transform.parent = null;
-			Destroy(nowSelectObj);
-			NowSelectPlayerScoreListNode = null;
-	 	}
-
-		NowSelectPlayerScoreListNode = PlayerScoreListNodeList[PlayerScoreListNodeList.Count-1].GetComponent<PlayerScoreListNode>();
-		NowSelectPlayerScoreListNode.SetEnableInputField(true);
+		nowSelectObj.transform.parent = null;
+		Destroy(nowSelectObj);
 	}
 	
-	public void OnClickPlayerNameInputNextButton() {
+	public void OnClickPlayerNameInputAddButton() {
+		if (PlayerScoreListNodeList.Count < PlayerCountMax) {
+			AddPlayerScoreListNode();
+		}
 	}
 	
 	public void OnClickPlayerNameInputInputEndButton() {
-		NowState = State.ScoreInputInit;
+
+		List<GameObject> deleteList = new List<GameObject>();
+		
+		// 名前空文字の要素を削除する
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			if (string.IsNullOrEmpty(node.GetName())) {
+				deleteList.Add(obj);
+				obj.transform.SetParent(null);
+			}
+		}
+
+		for (int i = 0; i < deleteList.Count; i++) {
+			PlayerScoreListNodeList.Remove(deleteList[i]);
+			Destroy(deleteList[i]);
+		}
+
+		if (PlayerScoreListNodeList.Count > 0) {
+			NowState = State.ScoreInputInit;
+		}
 	}
 	
 	// ScoreInputContainerのマウスイベント
@@ -268,7 +273,9 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickScoreInputNextButton() {
-		StartCoroutine(ClickScoreInputNextButton());
+		if (TurnLabelListNodeList.Count < TurnCountMax) {
+			StartCoroutine(ClickScoreInputNextButton());
+		}
 	}
 
 	private IEnumerator ClickScoreInputNextButton() {
@@ -319,6 +326,7 @@ public class ScoreInputScene : SceneBase {
 	
 	// ResultContainerのマウスイベント
 	public void OnClickResultBackButton() {
+
 		NowState = State.ScoreInputInit;
 	}
 	
@@ -364,21 +372,11 @@ public class ScoreInputScene : SceneBase {
 		node.transform.localScale = Vector3.one;
 
 		PlayerScoreListNodeList.Add(node);
-		NowSelectPlayerScoreListNode = node.GetComponent<PlayerScoreListNode>();
-		NowSelectPlayerScoreListNode.Setup(PlayerNameInputEndEditCallback, PlayerScoreListNodeList.Count-1, OnScrollValueChange, OpenScoreInputer);
+		PlayerScoreListNode listNode = node.GetComponent<PlayerScoreListNode>();
+		listNode.Setup(PlayerNameInputEndEditCallback, PlayerScoreListNodeList.Count-1, OnScrollValueChange, OpenScoreInputer);
 	}
 
 	void PlayerNameInputEndEditCallback(List<string> inputStrings) {
-		NowSelectPlayerScoreListNode.SetEnableInputField(false);
-		AddPlayerScoreListNode();
-
-		for (int i = 1; i < inputStrings.Count; i++) {
-			NowSelectPlayerScoreListNode.SetName(inputStrings[i]);
-			NowSelectPlayerScoreListNode.SetEnableInputField(false);
-			AddPlayerScoreListNode();
-		}
-
-		NowSelectPlayerScoreListNode.ActivateInputField();
 	}
 	
 	void SetClickableTextListEnable(bool enable) {

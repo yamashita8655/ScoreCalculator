@@ -4,8 +4,8 @@ using System.Collections;
 
 public class PlayerNameInputContainer : MonoBehaviour {
 
-	[SerializeField]	Button	PrevButton; 
-	[SerializeField]	Button	NextButton; 
+	[SerializeField]	Button	DeleteButton; 
+	[SerializeField]	Button	AddButton; 
 	[SerializeField]	Button	InputEndButton; 
 
 //	// Use this for initialization
