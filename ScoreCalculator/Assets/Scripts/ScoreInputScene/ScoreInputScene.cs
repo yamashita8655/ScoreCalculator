@@ -17,12 +17,28 @@ public class ScoreInputScene : SceneBase {
 	[SerializeField]	ScrollRect	BaseScrollView;
 	[SerializeField]	ScrollRect	TopScrollView;// とりあえず仮
 	[SerializeField]	GameObject	ScoreInputer;
+
+	// 途中セーブに必要な情報
+	// 参加者人数
+		// 参加者の名前
+		// 参加者のスコア
+	// ターン数
+
+	/*
+		PLAYER_NUM,5
+		TURN,3
+		NAME,yasuo,5,,5
+		NAME,yasuo
+		NAME,yasuo
+		NAME,yasuo
+		NAME,yasuo
+	*/
+
 	
 	private int	PlayerCountMax = 12;
 	private int	TurnCountMax = 999;
 
 	List<GameObject>	PlayerScoreListNodeList = new List<GameObject>();
-
 	List<GameObject>	TurnLabelListNodeList = new List<GameObject>();
 
 	enum ToggleType {
@@ -49,6 +65,11 @@ public class ScoreInputScene : SceneBase {
 
 	State NowState = State.PlayerNameInputInit;
 	RuleConfigState NowRuleConfing = RuleConfigState.DescendingOrder;
+
+	private string InprogressDataKey		= "INPROGRESSDATA";
+	private string InprogressNameKey		= "NAME";
+	private string InprogressTurnKey 		= "TURN";
+	private string InprogressPlayerNumKey	= "PLAYER_NUM";
 	
 	//[SerializeField]	Button	StartCulcButton; 
 	//[SerializeField]	Button	DataCheckButton; 
@@ -87,6 +108,8 @@ public class ScoreInputScene : SceneBase {
 		UpdateRuleConfigString();
 
 		ScoreInputer.SetActive(false);
+
+		CheckInprogressData();
 	}
 
 	// Update is called once per frame
@@ -177,6 +200,7 @@ public class ScoreInputScene : SceneBase {
 	
 	// HeaderContainerのマウスイベント
 	public void OnClickHeaderTitleButton() {
+		ClearInprogressData();
 		SceneManager.Instance.ChangeScene(SceneManager.TitleScene);
 	}
 	
@@ -232,12 +256,14 @@ public class ScoreInputScene : SceneBase {
 		}
 
 		if (PlayerScoreListNodeList.Count > 0) {
+			SaveInprogressData();
 			NowState = State.ScoreInputInit;
 		}
 	}
 	
 	// ScoreInputContainerのマウスイベント
 	public void OnClickScoreInputPrevButton() {
+		SaveInprogressData();
 		StartCoroutine(ClickScoreInputPrevButton());
 	}
 
@@ -274,6 +300,7 @@ public class ScoreInputScene : SceneBase {
 	
 	public void OnClickScoreInputNextButton() {
 		if (TurnLabelListNodeList.Count < TurnCountMax) {
+			SaveInprogressData();
 			StartCoroutine(ClickScoreInputNextButton());
 		}
 	}
@@ -305,6 +332,7 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickScoreInputResultButton() {
+		SaveInprogressData();
 		bool findEmptyNode = false;
 		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
 			GameObject obj = PlayerScoreListNodeList[i];
@@ -334,6 +362,7 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickResultKeepRestartButton() {
+		ClearInprogressData();
 		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
 			GameObject obj = PlayerScoreListNodeList[i];
 			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
@@ -349,6 +378,7 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickResultClearRestartButton() {
+		ClearInprogressData();
 		Initialize();
 	}
 	
@@ -365,7 +395,7 @@ public class ScoreInputScene : SceneBase {
 		turnNode.SetTurnText("Turn" + count.ToString());
 	}
 
-	private void AddPlayerScoreListNode() {
+	private PlayerScoreListNode AddPlayerScoreListNode() {
 		GameObject node = Instantiate(PlayerScoreListNode);
 		node.transform.SetParent(BaseScrollView.content);
 		node.transform.position = Vector3.zero;
@@ -374,6 +404,8 @@ public class ScoreInputScene : SceneBase {
 		PlayerScoreListNodeList.Add(node);
 		PlayerScoreListNode listNode = node.GetComponent<PlayerScoreListNode>();
 		listNode.Setup(PlayerNameInputEndEditCallback, PlayerScoreListNodeList.Count-1, OnScrollValueChange, OpenScoreInputer);
+
+		return listNode;
 	}
 
 	void PlayerNameInputEndEditCallback(List<string> inputStrings) {
@@ -488,9 +520,6 @@ public class ScoreInputScene : SceneBase {
 	}
 
 	public void OnScrollValueChange(Vector2 pos) {
-		Debug.Log("ValueChange");
-		Debug.Log(pos);
-
 		TopScrollView.normalizedPosition = pos;
 		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
 			PlayerScoreListNode node = PlayerScoreListNodeList[i].GetComponent<PlayerScoreListNode>();
@@ -501,5 +530,81 @@ public class ScoreInputScene : SceneBase {
 	private void OpenScoreInputer(Text outputText) {
 		ScoreInputer scoreInputer = ScoreInputer.GetComponent<ScoreInputer>();
 		scoreInputer.Open(outputText);
+	}
+
+	// 後でStringUtiliryに移すけど、とりあえず文字列系操作の処理を記載していく
+	private void SaveInprogressData() {
+		string saveString = "";
+		saveString += string.Format("{0},{1}\n", InprogressPlayerNumKey, PlayerScoreListNodeList.Count);
+		saveString += string.Format("{0},{1}\n", InprogressTurnKey, TurnLabelListNodeList.Count);
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			string playerDataString = "";
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			playerDataString = string.Format("{0},{1}", InprogressNameKey, node.GetName());
+			List<GameObject> scoreNodeList = node.GetScoreListNodeList();
+			for (int j = 0; j < scoreNodeList.Count; j++) {
+				ScoreListNode scoreNode = scoreNodeList[j].GetComponent<ScoreListNode>();
+				string score = scoreNode.GetScoreText();
+				playerDataString += "," + score;
+			}
+			saveString += playerDataString;
+			saveString += "\n";
+		}
+
+		PlayerPrefs.SetString(InprogressDataKey, saveString);
+	}
+	private void ClearInprogressData() {
+		PlayerPrefs.SetString(InprogressDataKey, "");
+	}
+	
+	private void CheckInprogressData() {
+		string s = PlayerPrefs.GetString(InprogressDataKey);
+		if (string.IsNullOrEmpty(s) != true) {
+			ParseInprogressData(s);
+			if (TurnLabelListNodeList.Count == 0) {
+				NowState = State.PlayerNameInputInit;
+			} else {
+				NowState = State.ScoreInputInit;
+			}
+			UpdateTotalScore();
+			UpdateRanking();
+		}
+	}
+	
+	private void ParseInprogressData(string inprogressData) {
+		char[] lineSplitRule = {'\n'};
+		string[] lineStringList = inprogressData.Split(lineSplitRule);
+
+		for (int i = 0; i < lineStringList.Length; i++) {
+			string lineString = lineStringList[i];
+			char[] nameSplitRule = {','};
+			string[] nameDataList = lineString.Split(nameSplitRule);
+
+			if (nameDataList[0] == InprogressTurnKey) {
+				int turnNum = int.Parse(nameDataList[1]);
+				for (int j = 0; j < turnNum; j++) {
+					AddTurnLabelListNode();
+				}
+			}
+
+			if (nameDataList[0] == InprogressNameKey) {
+
+				PlayerScoreListNode node = null;
+				for (int j = 1; j < nameDataList.Length; j++) {
+					if (j == 1) {
+						node = AddPlayerScoreListNode();
+						node.SetName(nameDataList[j]);
+					}
+
+					if (j > 1) {
+						node.AddScoreListNode();
+						node.SetupScoreListNode();
+						node.SetScoreListScoreText(nameDataList[j]);
+					}
+				}
+			}
+		}
+
 	}
 }

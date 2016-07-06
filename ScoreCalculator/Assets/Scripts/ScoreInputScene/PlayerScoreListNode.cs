@@ -42,6 +42,10 @@ public class PlayerScoreListNode : MonoBehaviour {
 	public void SetupScoreListNode() {
 		NowSelectScoreListNode.Setup(OpenScoreInputerCallback);
 	}
+	
+	public void SetScoreListScoreText(string score) {
+		NowSelectScoreListNode.SetScoreText(score);
+	}
 
 	public void SetName(string name) {
 		NameInputField.text = name;
