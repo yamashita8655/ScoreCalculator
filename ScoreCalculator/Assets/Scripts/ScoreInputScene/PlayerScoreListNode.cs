@@ -148,8 +148,10 @@ public class PlayerScoreListNode : MonoBehaviour {
 		for (int i = 0; i < ScoreListNodeList.Count; i++) {
 			GameObject obj = ScoreListNodeList[i];
 			ScoreListNode node = obj.GetComponent<ScoreListNode>();
-			int score = int.Parse(node.GetScoreText());
-			totalScore += score;
+			int score = 0;
+			if (int.TryParse(node.GetScoreText(), out score)) {
+				totalScore += score;
+			}
 		}
 
 		TotalText.text = totalScore.ToString();
