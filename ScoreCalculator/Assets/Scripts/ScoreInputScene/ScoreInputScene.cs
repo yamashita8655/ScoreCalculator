@@ -17,6 +17,7 @@ public class ScoreInputScene : SceneBase {
 	[SerializeField]	ScrollRect	BaseScrollView;
 	[SerializeField]	ScrollRect	TopScrollView;// とりあえず仮
 	[SerializeField]	GameObject	ScoreInputer;
+	[SerializeField]	GameObject	HelpImageDialog;
 
 	// 途中セーブに必要な情報
 	// 参加者人数
@@ -108,8 +109,9 @@ public class ScoreInputScene : SceneBase {
 		UpdateRuleConfigString();
 
 		ScoreInputer.SetActive(false);
-
-		CheckInprogressData();
+		HelpImageDialog.SetActive(false);
+		
+			CheckInprogressData();
 	}
 
 	// Update is called once per frame
@@ -216,6 +218,11 @@ public class ScoreInputScene : SceneBase {
 		if (NowState != State.PlayerNameInputUpdate) {
 			UpdateRanking();
 		}
+	}
+	
+	public void OnClickHeaderHelpButton() {
+		HelpImageDialog dialog = HelpImageDialog.GetComponent<HelpImageDialog>();
+		dialog.Open();
 	}
 
 	// PlayerNameInputContainerのマウスイベント
