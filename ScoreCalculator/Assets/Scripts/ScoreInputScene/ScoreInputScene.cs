@@ -162,6 +162,7 @@ public class ScoreInputScene : SceneBase {
 			AddTurnLabelListNode();
 		} else {
 			SetClickableTextListEnable(true);
+			OnScrollValueChange(Vector2.one);
 		}
 	}
 
@@ -170,7 +171,7 @@ public class ScoreInputScene : SceneBase {
 		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
 			GameObject obj = PlayerScoreListNodeList[i];
 			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
-			node.AddScoreListNode();
+			node.AddScoreListNode(true);
 			node.SetupScoreListNode();
 		}
 	}
@@ -556,7 +557,13 @@ public class ScoreInputScene : SceneBase {
 				playerDataString += "," + score;
 			}
 			saveString += playerDataString;
+			string totalScore = node.GetTotalScoreText();
+			saveString += "," + totalScore;
+			string rank = node.GetRankingText();
+			saveString += "," + rank;
 			saveString += "\n";
+
+			Debug.Log(saveString);
 		}
 
 		PlayerPrefs.SetString(InprogressDataKey, saveString);
@@ -574,8 +581,8 @@ public class ScoreInputScene : SceneBase {
 			} else {
 				NowState = State.ScoreInputInit;
 			}
-			UpdateTotalScore();
-			UpdateRanking();
+//			UpdateTotalScore();
+//			UpdateRanking();
 		}
 	}
 	
@@ -583,13 +590,14 @@ public class ScoreInputScene : SceneBase {
 		char[] lineSplitRule = {'\n'};
 		string[] lineStringList = inprogressData.Split(lineSplitRule);
 
+		int turnNum = 0;
 		for (int i = 0; i < lineStringList.Length; i++) {
 			string lineString = lineStringList[i];
 			char[] nameSplitRule = {','};
 			string[] nameDataList = lineString.Split(nameSplitRule);
 
 			if (nameDataList[0] == InprogressTurnKey) {
-				int turnNum = int.Parse(nameDataList[1]);
+				turnNum = int.Parse(nameDataList[1]);
 				for (int j = 0; j < turnNum; j++) {
 					AddTurnLabelListNode();
 				}
@@ -597,21 +605,26 @@ public class ScoreInputScene : SceneBase {
 
 			if (nameDataList[0] == InprogressNameKey) {
 
-				PlayerScoreListNode node = null;
-				for (int j = 1; j < nameDataList.Length; j++) {
-					if (j == 1) {
-						node = AddPlayerScoreListNode();
-						node.SetName(nameDataList[j]);
-					}
-
-					if (j > 1) {
-						node.AddScoreListNode();
-						node.SetupScoreListNode();
-						node.SetScoreListScoreText(nameDataList[j]);
-					}
+				PlayerScoreListNode node = AddPlayerScoreListNode();
+				int index = 1;
+				node.SetName(nameDataList[index]);
+				index++;
+				int scoreDataCount = nameDataList.Length-1-1-1-1;// データ個数-名前-キー-合計値とランク
+				for (int j = 0; j < scoreDataCount; j++) {
+					node.AddScoreListNode(false);
+					//if (string.IsNullOrEmpty(nameDataList[index])) {
+					//	node.AddScoreListNode(true);
+					//} else {
+					//	node.AddScoreListNode(false);
+					//}
+					node.SetupScoreListNode();
+					node.SetScoreListScoreText(nameDataList[index]);
+					index++;
 				}
+				node.SetTotalScoreText(nameDataList[index]);
+				index++;
+				node.SetRankText(nameDataList[index]);
 			}
 		}
-
 	}
 }

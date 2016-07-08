@@ -67,8 +67,8 @@ public class PlayerScoreListNode : MonoBehaviour {
 		NameInputField.ActivateInputField();
 	}
 
-	public void AddScoreListNode() {
-		AddScoreListNodeObject();
+	public void AddScoreListNode(bool enabled) {
+		AddScoreListNodeObject(enabled);
 	}
 
 	// Update is called once per frame
@@ -106,7 +106,7 @@ public class PlayerScoreListNode : MonoBehaviour {
 		NowSelectScoreListNode.SetClickableTextEnable(enable);
 	}
 
-	private void AddScoreListNodeObject() {
+	private void AddScoreListNodeObject(bool enabled) {
 		GameObject node = Instantiate(ScoreListNodeObject);
 		node.transform.SetParent(ScoreScrollRect.content);
 		node.transform.position = Vector3.zero;
@@ -114,6 +114,7 @@ public class PlayerScoreListNode : MonoBehaviour {
 
 		ScoreListNodeList.Add(node);
 		NowSelectScoreListNode = node.GetComponent<ScoreListNode>();
+		NowSelectScoreListNode.SetClickableTextEnable(enabled);
 //		NowSelectScoreListNode.Setup(PlayerNameInputEndEditCallback);
 	}
 
@@ -156,6 +157,10 @@ public class PlayerScoreListNode : MonoBehaviour {
 
 		TotalText.text = totalScore.ToString();
 	}
+	
+	public void SetTotalScoreText(string score) {
+		TotalText.text = score;
+	}
 
 	public void InitTotalScoreText() {
 		TotalText.text = "0";
@@ -167,6 +172,14 @@ public class PlayerScoreListNode : MonoBehaviour {
 	
 	public void InitRankingText() {
 		RankText.text = "0";
+	}
+
+	public string GetRankingText() {
+		return RankText.text;
+	}
+	
+	public void SetRankingText(string rank) {
+		RankText.text = rank;
 	}
 
 	public void UpdateScrollValue(Vector2 pos) {
