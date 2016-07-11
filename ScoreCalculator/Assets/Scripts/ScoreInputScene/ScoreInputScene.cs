@@ -18,6 +18,8 @@ public class ScoreInputScene : SceneBase {
 	[SerializeField]	ScrollRect	TopScrollView;// とりあえず仮
 	[SerializeField]	GameObject	ScoreInputer;
 	[SerializeField]	GameObject	HelpImageDialog;
+	[SerializeField]	GameObject	MessageDialogObject;
+	[SerializeField]	MessageDialog	MessageDialogComponent;
 
 	// 途中セーブに必要な情報
 	// 参加者人数
@@ -37,7 +39,7 @@ public class ScoreInputScene : SceneBase {
 
 	
 	private int	PlayerCountMax = 12;
-	private int	TurnCountMax = 999;
+	private int	TurnCountMax = 3;
 
 	List<GameObject>	PlayerScoreListNodeList = new List<GameObject>();
 	List<GameObject>	TurnLabelListNodeList = new List<GameObject>();
@@ -110,8 +112,9 @@ public class ScoreInputScene : SceneBase {
 
 		ScoreInputer.SetActive(false);
 		HelpImageDialog.SetActive(false);
+		MessageDialogObject.SetActive(false);
 		
-			CheckInprogressData();
+		CheckInprogressData();
 	}
 
 	// Update is called once per frame
@@ -241,6 +244,8 @@ public class ScoreInputScene : SceneBase {
 	public void OnClickPlayerNameInputAddButton() {
 		if (PlayerScoreListNodeList.Count < PlayerCountMax) {
 			AddPlayerScoreListNode();
+		} else {
+			MessageDialogComponent.Open("これ以上人数は増やせません。");
 		}
 	}
 	
@@ -266,6 +271,8 @@ public class ScoreInputScene : SceneBase {
 		if (PlayerScoreListNodeList.Count > 0) {
 			SaveInprogressData();
 			NowState = State.ScoreInputInit;
+		} else {
+			MessageDialogComponent.Open("プレイヤーは最低一人以上\n追加してください");
 		}
 	}
 	
@@ -310,6 +317,8 @@ public class ScoreInputScene : SceneBase {
 		if (TurnLabelListNodeList.Count < TurnCountMax) {
 			SaveInprogressData();
 			StartCoroutine(ClickScoreInputNextButton());
+		} else {
+			MessageDialogComponent.Open("ごめんなさい\nこれ以上ターン数は追加できません");
 		}
 	}
 
@@ -325,6 +334,7 @@ public class ScoreInputScene : SceneBase {
 		}
 
 		if (findEnpty == true) {
+			MessageDialogComponent.Open("スコアが入力されていない\nプレイヤーが存在します");
 			yield break;
 		}
 
@@ -357,6 +367,8 @@ public class ScoreInputScene : SceneBase {
 			UpdateTotalScore();
 			UpdateRanking();
 			NowState = State.ResultInit;
+		} else {
+			MessageDialogComponent.Open("スコアが入力されていない\nプレイヤーが存在します");
 		}
 	}
 	
