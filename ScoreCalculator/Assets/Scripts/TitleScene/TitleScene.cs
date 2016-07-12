@@ -22,6 +22,7 @@ public class TitleScene : SceneBase {
 
 	public void OnClickStartCulcButton() {
 		SceneManager.Instance.ChangeScene(SceneManager.ScoreInputScene);
+		//SceneManager.Instance.ChangeScene(SceneManager.AnchorTestScene);
 	}
 	
 	public void OnClickDataCheckButton() {

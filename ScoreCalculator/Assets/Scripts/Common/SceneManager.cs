@@ -6,9 +6,11 @@ public class SceneManager : Singleton<SceneManager> {
 
 	[SerializeField] GameObject TitleSceneObject;
 	[SerializeField] GameObject ScoreInputSceneObject;
+	[SerializeField] GameObject AnchorTestSceneObject;
 
 	public static readonly string TitleScene = "TitleScene";
 	public static readonly string ScoreInputScene = "ScoreInputScene";
+	public static readonly string AnchorTestScene = "AnchorTestScene";
 	public static readonly Dictionary<string, GameObject> SceneObjectDict = new Dictionary<string, GameObject>();
 
 	private GameObject CurrentScene = null;
@@ -26,6 +28,7 @@ public class SceneManager : Singleton<SceneManager> {
 		Debug.Log("SceneMangaer init");
 		SceneObjectDict.Add(TitleScene, TitleSceneObject);
 		SceneObjectDict.Add(ScoreInputScene, ScoreInputSceneObject);
+		SceneObjectDict.Add(AnchorTestScene, AnchorTestSceneObject);
 		TitleSceneObject.SetActive(true);
 
 		SceneBase scene = TitleSceneObject.GetComponent<SceneBase>();

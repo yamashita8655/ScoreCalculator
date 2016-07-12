@@ -39,7 +39,7 @@ public class ScoreInputScene : SceneBase {
 
 	
 	private int	PlayerCountMax = 12;
-	private int	TurnCountMax = 3;
+	private int	TurnCountMax = 999;
 
 	List<GameObject>	PlayerScoreListNodeList = new List<GameObject>();
 	List<GameObject>	TurnLabelListNodeList = new List<GameObject>();
