@@ -15,15 +15,6 @@ public class SceneManager : Singleton<SceneManager> {
 
 	private GameObject CurrentScene = null;
 
-	// Use this for initialization
-	void Start () {
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
 	public void Initialize() {
 		Debug.Log("SceneMangaer init");
 		SceneObjectDict.Add(TitleScene, TitleSceneObject);
