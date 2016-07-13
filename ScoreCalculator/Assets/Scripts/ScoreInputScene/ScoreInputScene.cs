@@ -200,6 +200,10 @@ public class ScoreInputScene : SceneBase {
 		ToggleContainer(ToggleType.Result);
 		NowState = State.ResultUpdate;
 		
+		UpdateRankTopIconEnable();
+	}
+
+	void UpdateRankTopIconEnable() {
 		// ランキングアイコンの表示更新
 		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
 			GameObject obj = PlayerScoreListNodeList[i];
@@ -245,6 +249,7 @@ public class ScoreInputScene : SceneBase {
 		
 		if (NowState != State.PlayerNameInputUpdate) {
 			UpdateRanking();
+			UpdateRankTopIconEnable();
 		}
 	}
 	
