@@ -10,6 +10,7 @@ public class PlayerScoreListNode : MonoBehaviour {
 	[SerializeField] Text RankText;
 	[SerializeField] ScrollRect ScoreScrollRect;
 	[SerializeField] GameObject	ScoreListNodeObject;
+	[SerializeField] Image	RankTopImage;
 
 	Action<List<string>> ScoreInputSceneEndEditCallback = null;
 
@@ -29,6 +30,7 @@ public class PlayerScoreListNode : MonoBehaviour {
 		Number = number;
 		InitTotalScoreText();
 		InitRankingText();
+		SetRankTopIconEnable(false);
 	}
 
 	public int GetNumber() {
@@ -188,5 +190,17 @@ public class PlayerScoreListNode : MonoBehaviour {
 	
 	public void OnScrollValueChange(Vector2 pos) {
 		ScrollValueChangeCallback(pos);
+	}
+
+	public void SetRankTopIconEnable(bool enable) {
+		RankTopImage.enabled = enable;
+	}
+	
+	public void UpdateRankTopIconEnable() {
+		if (RankText.text == "1") {
+			RankTopImage.enabled = true;
+		} else {
+			RankTopImage.enabled = false;
+		}
 	}
 }

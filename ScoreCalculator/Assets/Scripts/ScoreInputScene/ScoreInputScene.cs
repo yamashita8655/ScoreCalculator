@@ -20,6 +20,8 @@ public class ScoreInputScene : SceneBase {
 	[SerializeField]	GameObject	HelpImageDialog;
 	[SerializeField]	GameObject	MessageDialogObject;
 	[SerializeField]	MessageDialog	MessageDialogComponent;
+	[SerializeField]	GameObject	MessageDialogOkCancelObject;
+	[SerializeField]	MessageDialogOkCancel	MessageDialogOkCancelComponent;
 
 	// 途中セーブに必要な情報
 	// 参加者人数
@@ -113,6 +115,7 @@ public class ScoreInputScene : SceneBase {
 		ScoreInputer.SetActive(false);
 		HelpImageDialog.SetActive(false);
 		MessageDialogObject.SetActive(false);
+		MessageDialogOkCancelObject.SetActive(false);
 		
 		CheckInprogressData();
 	}
@@ -167,6 +170,17 @@ public class ScoreInputScene : SceneBase {
 			SetClickableTextListEnable(true);
 			OnScrollValueChange(Vector2.one);
 		}
+
+		InitRankTopIconEnable();
+	}
+
+	private void InitRankTopIconEnable() {
+		// スコア入力ノードを、プレイヤー数分一度に追加する
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			node.SetRankTopIconEnable(false);
+		}
 	}
 
 	private void AddScoreInputListNode() {
@@ -185,6 +199,13 @@ public class ScoreInputScene : SceneBase {
 	void ResultInit() {
 		ToggleContainer(ToggleType.Result);
 		NowState = State.ResultUpdate;
+		
+		// ランキングアイコンの表示更新
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			node.UpdateRankTopIconEnable();
+		}
 	}
 	
 	void ResultUpdate() {
@@ -206,8 +227,11 @@ public class ScoreInputScene : SceneBase {
 	
 	// HeaderContainerのマウスイベント
 	public void OnClickHeaderTitleButton() {
-		ClearInprogressData();
-		SceneManager.Instance.ChangeScene(SceneManager.TitleScene);
+		string str = string.Format("タイトルに戻りますか？\n\n※注意※\n入力情報は削除されます");
+		MessageDialogOkCancelComponent.Open(str, () => {
+			ClearInprogressData();
+			SceneManager.Instance.ChangeScene(SceneManager.TitleScene);
+		});
 	}
 	
 	public void OnClickHeaderRuleConfigButton() {
@@ -245,7 +269,8 @@ public class ScoreInputScene : SceneBase {
 		if (PlayerScoreListNodeList.Count < PlayerCountMax) {
 			AddPlayerScoreListNode();
 		} else {
-			MessageDialogComponent.Open("これ以上人数は増やせません。");
+			string str = string.Format("これ以上人数は増やせません。\n(最大{0}人まで)", PlayerCountMax);
+			MessageDialogComponent.Open(str);
 		}
 	}
 	
@@ -533,9 +558,9 @@ public class ScoreInputScene : SceneBase {
 		HeaderContainer header = HeaderContainer.GetComponent<HeaderContainer>();
 
 		if (NowRuleConfing == RuleConfigState.DescendingOrder) {
-			header.SetRuleConfigText("多い方が1位");
+			header.SetRuleConfigText("合計が多い方が1位");
 		} else if (NowRuleConfing == RuleConfigState.AscendingOrder) {
-			header.SetRuleConfigText("少ない方が1位");
+			header.SetRuleConfigText("合計が少ない方が1位");
 		}
 	}
 
