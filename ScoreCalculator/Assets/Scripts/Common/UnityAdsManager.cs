@@ -6,15 +6,15 @@ public class UnityAdsManager : Singleton<UnityAdsManager> {
 	public void Initialize() {
 		Debug.Log("UnityAdsManager init");
 #if UNITY_EDITOR
-		Advertisement.Initialize("", true);
+//		Advertisement.Initialize("", true);
 #else
-		Advertisement.Initialize("");
+//		Advertisement.Initialize("");
 #endif
 	}
 
 	public void ShowAd() {
-		if (Advertisement.IsReady()) {
+/*		if (Advertisement.IsReady()) {
 			Advertisement.Show();
-		}
+		}*/
 	}
 }
