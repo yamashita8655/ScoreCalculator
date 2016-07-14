@@ -249,6 +249,9 @@ public class ScoreInputScene : SceneBase {
 		
 		if (NowState != State.PlayerNameInputUpdate) {
 			UpdateRanking();
+		}
+
+		if (NowState == State.ResultUpdate) {
 			UpdateRankTopIconEnable();
 		}
 	}
@@ -266,7 +269,7 @@ public class ScoreInputScene : SceneBase {
 		
 		GameObject nowSelectObj = PlayerScoreListNodeList[PlayerScoreListNodeList.Count-1];
 		PlayerScoreListNodeList.RemoveAt(PlayerScoreListNodeList.Count-1);
-		nowSelectObj.transform.parent = null;
+		nowSelectObj.transform.SetParent(null);
 		Destroy(nowSelectObj);
 	}
 	
@@ -605,7 +608,9 @@ public class ScoreInputScene : SceneBase {
 			saveString += "," + rank;
 			saveString += "\n";
 
+#if UNITY_EDITOR
 			Debug.Log(saveString);
+#endif
 		}
 
 		PlayerPrefs.SetString(InprogressDataKey, saveString);

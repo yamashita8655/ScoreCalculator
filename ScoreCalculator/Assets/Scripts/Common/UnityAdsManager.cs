@@ -13,7 +13,7 @@ public class UnityAdsManager : Singleton<UnityAdsManager> {
 	}
 
 	public void ShowAd() {
-		if (Advertisement.isReady()) {
+		if (Advertisement.IsReady()) {
 			Advertisement.Show();
 		}
 	}
