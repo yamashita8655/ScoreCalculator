@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Collections;
 
 public class ScoreInputer : MonoBehaviour {
@@ -7,9 +8,11 @@ public class ScoreInputer : MonoBehaviour {
 	[SerializeField] Text InputText;
 
 	Text OutputText;
+	Action CloseCallback;
 
-	public void Open(Text outputText) {
+	public void Open(Text outputText, Action callback) {
 		OutputText = outputText;
+		CloseCallback = callback;
 		gameObject.SetActive(true);
 	}
 
@@ -126,5 +129,6 @@ public class ScoreInputer : MonoBehaviour {
 		InputText.text = "";
 		yield return null;
 		gameObject.SetActive(false);
+		CloseCallback();
 	}
 }

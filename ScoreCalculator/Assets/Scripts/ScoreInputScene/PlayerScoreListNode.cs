@@ -73,10 +73,6 @@ public class PlayerScoreListNode : MonoBehaviour {
 		AddScoreListNodeObject(enabled);
 	}
 
-	// Update is called once per frame
-	void Update () {
-	}
-
 	public void OnEndEditNameInputField() {
 		string inputString = NameInputField.text.Trim();
 		if (string.IsNullOrEmpty (inputString) == true) {

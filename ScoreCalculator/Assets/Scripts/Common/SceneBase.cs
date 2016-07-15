@@ -3,10 +3,6 @@ using System.Collections;
 
 public class SceneBase : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	
-	}
 	
 	virtual public void Initialize() {
 

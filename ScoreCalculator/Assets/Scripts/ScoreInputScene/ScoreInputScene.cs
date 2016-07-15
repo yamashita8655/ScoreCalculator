@@ -75,7 +75,12 @@ public class ScoreInputScene : SceneBase {
 	private string InprogressNameKey		= "NAME";
 	private string InprogressTurnKey 		= "TURN";
 	private string InprogressPlayerNumKey	= "PLAYER_NUM";
-	
+
+	float ShowAdsCounter = 0.0f;
+	float ShowAdsTime = 300.0f;
+//	float ShowAdsTime = 5.0f;
+	bool ShowAdsFlag = false;
+
 	//[SerializeField]	Button	StartCulcButton; 
 	//[SerializeField]	Button	DataCheckButton; 
 	
@@ -83,12 +88,7 @@ public class ScoreInputScene : SceneBase {
 	//void Start () {
 	//
 	//}
-	//
-	//// Update is called once per frame
-	//void Update () {
-	//
-	//}
-	
+
 	override public void Initialize() {
 		Debug.Log("ScoreInputScene");
 		NowState = State.PlayerNameInputInit;
@@ -194,6 +194,17 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	void ScoreInputUpdate() {
+		if (ShowAdsFlag == false) {
+		} else {
+			if (NowState == State.ScoreInputUpdate) {
+				ShowAdsCounter += Time.deltaTime;
+				if (ShowAdsCounter > ShowAdsTime) {
+					UnityAdsManager.Instance.ShowAd();
+					ShowAdsCounter = 0.0f;
+					ShowAdsFlag = false;
+				}
+			}
+		}
 	}
 	
 	void ResultInit() {
@@ -231,6 +242,7 @@ public class ScoreInputScene : SceneBase {
 	
 	// HeaderContainerのマウスイベント
 	public void OnClickHeaderTitleButton() {
+		ResetShowAdsCounter();
 		string str = string.Format("タイトルに戻りますか？\n\n※注意※\n入力情報は削除されます");
 		MessageDialogOkCancelComponent.Open(str, () => {
 			ClearInprogressData();
@@ -239,6 +251,7 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickHeaderRuleConfigButton() {
+		ResetShowAdsCounter();
 		// ここの条件設定などは、後でダイアログか何かで選択した結果に変更すると思う
 		if (NowRuleConfing == RuleConfigState.DescendingOrder) {
 			NowRuleConfing = RuleConfigState.AscendingOrder;
@@ -257,12 +270,14 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickHeaderHelpButton() {
+		ResetShowAdsCounter();
 		HelpImageDialog dialog = HelpImageDialog.GetComponent<HelpImageDialog>();
 		dialog.Open();
 	}
 
 	// PlayerNameInputContainerのマウスイベント
 	public void OnClickPlayerNameInputDeleteButton() {
+		ResetShowAdsCounter();
 		if (PlayerScoreListNodeList.Count <= 0) {
 			return;
 		}
@@ -274,6 +289,7 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickPlayerNameInputAddButton() {
+		ResetShowAdsCounter();
 		if (PlayerScoreListNodeList.Count < PlayerCountMax) {
 			AddPlayerScoreListNode();
 		} else {
@@ -283,6 +299,7 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickPlayerNameInputInputEndButton() {
+		ResetShowAdsCounter();
 
 		List<GameObject> deleteList = new List<GameObject>();
 		
@@ -311,6 +328,7 @@ public class ScoreInputScene : SceneBase {
 	
 	// ScoreInputContainerのマウスイベント
 	public void OnClickScoreInputPrevButton() {
+		ResetShowAdsCounter();
 		SaveInprogressData();
 		StartCoroutine(ClickScoreInputPrevButton());
 	}
@@ -347,6 +365,7 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickScoreInputNextButton() {
+		ResetShowAdsCounter();
 		if (TurnLabelListNodeList.Count < TurnCountMax) {
 			SaveInprogressData();
 			StartCoroutine(ClickScoreInputNextButton());
@@ -383,6 +402,7 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickScoreInputResultButton() {
+		ResetShowAdsCounter();
 		SaveInprogressData();
 		bool findEmptyNode = false;
 		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
@@ -407,14 +427,17 @@ public class ScoreInputScene : SceneBase {
 	
 	// ResultContainerのマウスイベント
 	public void OnClickResultBackButton() {
+		ResetShowAdsCounter();
 
 		NowState = State.ScoreInputInit;
 	}
 	
 	public void OnClickResultSaveButton() {
+		ResetShowAdsCounter();
 	}
 	
 	public void OnClickResultKeepRestartButton() {
+		ResetShowAdsCounter();
 		ClearInprogressData();
 		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
 			GameObject obj = PlayerScoreListNodeList[i];
@@ -431,6 +454,7 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickResultClearRestartButton() {
+		ResetShowAdsCounter();
 		ClearInprogressData();
 		Initialize();
 	}
@@ -578,11 +602,17 @@ public class ScoreInputScene : SceneBase {
 			PlayerScoreListNode node = PlayerScoreListNodeList[i].GetComponent<PlayerScoreListNode>();
 			node.UpdateScrollValue(pos);
 		}
+
+		ResetShowAdsCounter();
 	}
 
 	private void OpenScoreInputer(Text outputText) {
 		ScoreInputer scoreInputer = ScoreInputer.GetComponent<ScoreInputer>();
-		scoreInputer.Open(outputText);
+		scoreInputer.Open(outputText, CloseScoreInputer);
+	}
+
+	private void CloseScoreInputer() {
+		ResetShowAdsCounter();
 	}
 
 	// 後でStringUtiliryに移すけど、とりあえず文字列系操作の処理を記載していく
@@ -673,5 +703,10 @@ public class ScoreInputScene : SceneBase {
 				node.SetRankText(nameDataList[index]);
 			}
 		}
+	}
+
+	void ResetShowAdsCounter() {
+		ShowAdsCounter = 0;
+		ShowAdsFlag = true;
 	}
 }

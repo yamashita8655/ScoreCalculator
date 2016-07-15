@@ -13,6 +13,7 @@ public class ScoreListNode : MonoBehaviour {
 
 	public void Setup(Action<Text> openScoreInputer) {
 		OpenScoreInputer = openScoreInputer;
+		ScoreInputText.text = "0";
     }
 	
 	public string GetScoreText() {
@@ -22,11 +23,7 @@ public class ScoreListNode : MonoBehaviour {
 	public void SetScoreText(string score) {
 		ScoreInputText.text = score;
     }
-
-	// Update is called once per frame
-	void Update () {
-	}
-	
+		
 	public void OnClickClickableText() {
 		OpenScoreInputer(ScoreInputText);
 	}
