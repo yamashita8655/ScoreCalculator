@@ -143,6 +143,8 @@ public class ScoreInputScene : SceneBase {
 
 		InitTotalScore();
 		InitRanking();
+
+		SetRemoveButtonActive(false);
 	}
 
 	private PlayerScoreListNode GetNowPlayerScoreListNode() {
@@ -172,6 +174,7 @@ public class ScoreInputScene : SceneBase {
 		}
 
 		InitRankTopIconEnable();
+		SetRemoveButtonActive(true);
 	}
 
 	private void InitRankTopIconEnable() {
@@ -212,6 +215,7 @@ public class ScoreInputScene : SceneBase {
 		NowState = State.ResultUpdate;
 		
 		UpdateRankTopIconEnable();
+		SetRemoveButtonActive(false);
 	}
 
 	void UpdateRankTopIconEnable() {
@@ -425,6 +429,25 @@ public class ScoreInputScene : SceneBase {
 		}
 	}
 	
+	public void OnClickScoreInputAddButton() {
+		ResetShowAdsCounter();
+		if (PlayerScoreListNodeList.Count < PlayerCountMax) {
+			PlayerScoreListNode node = AddPlayerScoreListNode();
+			for (int i = 0; i < TurnLabelListNodeList.Count; i++) {
+				node.AddScoreListNode(true);
+				node.SetupScoreListNode();
+			}
+			UpdateTotalScore();
+			UpdateRanking();
+			
+			OnScrollValueChange(Vector2.one);
+		
+		} else {
+			string str = string.Format("これ以上人数は増やせません。\n(最大{0}人まで)", PlayerCountMax);
+			MessageDialogComponent.Open(str);
+		}
+	}
+	
 	// ResultContainerのマウスイベント
 	public void OnClickResultBackButton() {
 		ResetShowAdsCounter();
@@ -480,7 +503,11 @@ public class ScoreInputScene : SceneBase {
 
 		PlayerScoreListNodeList.Add(node);
 		PlayerScoreListNode listNode = node.GetComponent<PlayerScoreListNode>();
-		listNode.Setup(PlayerNameInputEndEditCallback, PlayerScoreListNodeList.Count-1, OnScrollValueChange, OpenScoreInputer);
+		if (NowState == State.ScoreInputUpdate) {
+			listNode.Setup(PlayerNameInputEndEditCallback, PlayerScoreListNodeList.Count-1, OnScrollValueChange, OpenScoreInputer, RemovePlayerListNode, true);
+		} else {
+			listNode.Setup(PlayerNameInputEndEditCallback, PlayerScoreListNodeList.Count-1, OnScrollValueChange, OpenScoreInputer, RemovePlayerListNode, false);
+		}
 
 		return listNode;
 	}
@@ -705,8 +732,36 @@ public class ScoreInputScene : SceneBase {
 		}
 	}
 
+	void RemovePlayerListNode(PlayerScoreListNode deleteNode) {
+		string playerName = deleteNode.GetName();
+		string str = string.Format("{0}プレイヤーを\n削除しますか？", playerName);
+		MessageDialogOkCancelComponent.Open(str, () => {
+			for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+				GameObject obj = PlayerScoreListNodeList[i];
+				PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+				if (node == deleteNode) {
+					PlayerScoreListNodeList.Remove(obj);
+					obj.transform.SetParent(null);
+					Destroy(obj);
+					break;
+				}
+			}
+			UpdateTotalScore();
+			UpdateRanking();
+		});
+
+	}
+	
 	void ResetShowAdsCounter() {
 		ShowAdsCounter = 0;
 		ShowAdsFlag = true;
+	}
+	
+	void SetRemoveButtonActive(bool active) {
+		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+			GameObject obj = PlayerScoreListNodeList[i];
+			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
+			node.SetRemoveButtonActive(active);
+		}
 	}
 }

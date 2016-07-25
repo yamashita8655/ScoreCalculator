@@ -11,6 +11,7 @@ public class PlayerScoreListNode : MonoBehaviour {
 	[SerializeField] ScrollRect ScoreScrollRect;
 	[SerializeField] GameObject	ScoreListNodeObject;
 	[SerializeField] Image	RankTopImage;
+	[SerializeField] GameObject	RemoveButtonObject;
 
 	Action<List<string>> ScoreInputSceneEndEditCallback = null;
 
@@ -23,14 +24,18 @@ public class PlayerScoreListNode : MonoBehaviour {
 	
 	Action<Text> OpenScoreInputerCallback = null;
 
-	public void Setup(Action<List<string>> callback, int number, Action<Vector2> scrollCallback, Action<Text> openScoreInputerCallback) {
+	Action<PlayerScoreListNode> CallbackRemovePlayerScoreList = null;
+
+	public void Setup(Action<List<string>> callback, int number, Action<Vector2> scrollCallback, Action<Text> openScoreInputerCallback, Action<PlayerScoreListNode> removePlayerScoreListCallback, bool removeButtonActive) {
 		ScoreInputSceneEndEditCallback = callback;
 		ScrollValueChangeCallback = scrollCallback;
 		OpenScoreInputerCallback = openScoreInputerCallback;
+		CallbackRemovePlayerScoreList = removePlayerScoreListCallback;
 		Number = number;
 		InitTotalScoreText();
 		InitRankingText();
 		SetRankTopIconEnable(false);
+		SetRemoveButtonActive(removeButtonActive);
 	}
 
 	public int GetNumber() {
@@ -198,5 +203,13 @@ public class PlayerScoreListNode : MonoBehaviour {
 		} else {
 			RankTopImage.enabled = false;
 		}
+	}
+
+	public void OnClickRemoveButton() {
+		CallbackRemovePlayerScoreList(this);
+	}
+	
+	public void SetRemoveButtonActive(bool active) {
+		RemoveButtonObject.SetActive(active);
 	}
 }
