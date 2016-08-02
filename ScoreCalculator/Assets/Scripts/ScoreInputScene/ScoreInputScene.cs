@@ -22,6 +22,8 @@ public class ScoreInputScene : SceneBase {
 	[SerializeField]	MessageDialog	MessageDialogComponent;
 	[SerializeField]	GameObject	MessageDialogOkCancelObject;
 	[SerializeField]	MessageDialogOkCancel	MessageDialogOkCancelComponent;
+	[SerializeField]	GameObject	SaveDialogObject;
+	[SerializeField]	SaveDialog	SaveDialogComponent;
 
 	// 途中セーブに必要な情報
 	// 参加者人数
@@ -75,6 +77,9 @@ public class ScoreInputScene : SceneBase {
 	private string InprogressNameKey		= "NAME";
 	private string InprogressTurnKey 		= "TURN";
 	private string InprogressPlayerNumKey	= "PLAYER_NUM";
+	private string InprogressTitleKey		= "TITLE";
+	private string InprogressGameNameKey	= "GAME_NAME";
+	private string InprogressDateKey		= "DATE";
 
 	float ShowAdsCounter = 0.0f;
 	float ShowAdsTime = 300.0f;
@@ -116,6 +121,7 @@ public class ScoreInputScene : SceneBase {
 		HelpImageDialog.SetActive(false);
 		MessageDialogObject.SetActive(false);
 		MessageDialogOkCancelObject.SetActive(false);
+		SaveDialogObject.SetActive(false);
 		
 		CheckInprogressData();
 	}
@@ -457,6 +463,7 @@ public class ScoreInputScene : SceneBase {
 	
 	public void OnClickResultSaveButton() {
 		ResetShowAdsCounter();
+		SaveDialogComponent.Open(SaveGameData);
 	}
 	
 	public void OnClickResultKeepRestartButton() {
@@ -643,7 +650,7 @@ public class ScoreInputScene : SceneBase {
 	}
 
 	// 後でStringUtiliryに移すけど、とりあえず文字列系操作の処理を記載していく
-	private void SaveInprogressData() {
+	private string SaveInprogressData() {
 		string saveString = "";
 		saveString += string.Format("{0},{1}\n", InprogressPlayerNumKey, PlayerScoreListNodeList.Count);
 		saveString += string.Format("{0},{1}\n", InprogressTurnKey, TurnLabelListNodeList.Count);
@@ -671,6 +678,8 @@ public class ScoreInputScene : SceneBase {
 		}
 
 		PlayerPrefs.SetString(InprogressDataKey, saveString);
+		
+		return saveString;
 	}
 	private void ClearInprogressData() {
 		PlayerPrefs.SetString(InprogressDataKey, "");
@@ -763,5 +772,20 @@ public class ScoreInputScene : SceneBase {
 			PlayerScoreListNode node = obj.GetComponent<PlayerScoreListNode>();
 			node.SetRemoveButtonActive(active);
 		}
+	}
+
+	void SaveGameData(string title, string gameName) {
+		DateTime now = DateTime.Now;
+		
+		string saveString = "";
+		string saveInprogress = SaveInprogressData();
+		string dateString = string.Format("{0},{1}\n", InprogressDateKey, now.ToString("yyyy/MM/dd/HH/mm/ss"));
+		string titleString = string.Format("{0},{1}\n", InprogressTitleKey, title);
+		string gameNameString = string.Format("{0},{1}\n", InprogressGameNameKey, gameName);
+		saveString = string.Format("{0}{1}{2}", titleString, gameNameString, saveInprogress);
+
+
+		string fileName = now.ToString("yyyy_MM_dd_HH_mm_ss") + ".csv";
+		CsvManager.Instance.SaveCsv(fileName, saveString);
 	}
 }

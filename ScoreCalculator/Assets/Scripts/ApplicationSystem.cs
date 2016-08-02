@@ -7,6 +7,7 @@ public class ApplicationSystem : MonoBehaviour {
 	void Start () {
 		SceneManager.Instance.Initialize();
 		UnityAdsManager.Instance.Initialize();
+		CsvManager.Instance.Initialize();
 	}
 	
 	// Update is called once per frame
