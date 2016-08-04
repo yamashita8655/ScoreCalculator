@@ -32,12 +32,12 @@ public class CsvManager : Singleton<CsvManager> {
 		return res;
 	}
 
-	public string LoadCsv(string fileName) {
+	public string LoadCsv(string fileNameAndPath) {
 		string input = "";
 		try {
-			string path = Application.persistentDataPath + "/" + fileName;
+			//string path = Application.persistentDataPath + "/" + fileName;
 			StreamReader sr = new StreamReader(
-				path,
+				fileNameAndPath,
 				Encoding.UTF8);
 			input = sr.ReadToEnd();
 			Debug.Log(input);
