@@ -11,12 +11,36 @@ public class ResultSelectScene : SceneBase {
 	[SerializeField]	Button	TitleButton;
 	[SerializeField]	Button	BackButton;
 	[SerializeField]	GameObject	ResultSelectListNode;
+	[SerializeField]	GameObject	ResultListNode;// といいつつ、PlayerScoreListNodeの使いまわし
 	[SerializeField]	ScrollRect	SelectScrollView;
+	[SerializeField]	ScrollRect	ResultScrollView;
+	[SerializeField]	GameObject	SelectContainer;
+	[SerializeField]	GameObject	ResultContainer;
 
 	List<GameObject> ResultSelectListNodeList = new List<GameObject>();
+	List<GameObject> ResultListNodeList = new List<GameObject>();
+
+	class PlayerData {
+		public string Name;
+		public List<int> ScoreList;
+		public int	TotalScore;
+		public int	Rank;
+
+		public PlayerData() {
+		}
+	}
 
 	override public void Initialize() {
 		Debug.Log("ResultSelectScene");
+
+		SwitchContainer(true);
+
+		for (int i = 0; i < ResultSelectListNodeList.Count; i++) {
+			ResultSelectListNodeList[i].transform.parent = null;
+			Destroy(ResultSelectListNodeList[i]);
+		}
+		ResultSelectListNodeList.Clear();
+
 		string[] files = System.IO.Directory.GetFiles(Application.persistentDataPath, "*.csv", System.IO.SearchOption.AllDirectories);
 
 		for (int i = 0; i < files.Length; i++) {
@@ -53,7 +77,7 @@ public class ResultSelectScene : SceneBase {
 				}
 			}
 			
-			selectNode.Setup(date, title, gameName);
+			selectNode.Setup(date, title, gameName, OnClickOkButtonCallback, src);
 		}		
 	}
 	 
@@ -62,5 +86,86 @@ public class ResultSelectScene : SceneBase {
 	}
 
 	public void OnClickBackButton() {
+		SwitchContainer(true);
+	}
+	
+	public void OnClickOkButtonCallback(Transform obj, string src) {
+		SwitchContainer(false);
+		ResultInitialize(src);
+	}
+
+	private void SwitchContainer(bool activeSelect) {
+		if (activeSelect == true) {
+			SelectContainer.SetActive(true);
+			ResultContainer.SetActive(false);
+		} else {
+			SelectContainer.SetActive(false);
+			ResultContainer.SetActive(true);
+		}
+	}
+
+	private void ResultInitialize(string src) {
+		char[] lineSplitRule = {'\n'};
+		string[] lineStringList = src.Split(lineSplitRule);
+
+		int playerNum = 0;
+		int turnNum = 0;
+		char[] splitRule = {','};
+
+		List<PlayerData> playerDataList = new List<PlayerData>();
+
+		for (int i = 0; i < lineStringList.Length; i++) {
+			string[] list = lineStringList[i].Split(splitRule);
+			if (list[0] == "TURN") {
+				turnNum = int.Parse(list[1]);
+			} else if (list[0] == "NAME") {
+				List<int> scoreList = new List<int>();
+				int index = 1;
+				PlayerData pData = new PlayerData();
+				pData.Name = list[index];
+				index++;
+				for (int j = 0; j < turnNum; j++) {
+					scoreList.Add(int.Parse(list[index]));
+					index++;
+				}
+				pData.ScoreList = scoreList;
+				pData.TotalScore = int.Parse(list[index]);
+				index++;
+				pData.Rank = int.Parse(list[index]);
+				playerDataList.Add(pData);
+			}
+		}
+		
+		for (int i = 0; i < ResultListNodeList.Count; i++) {
+			ResultListNodeList[i].transform.SetParent(null);
+			Destroy(ResultListNodeList[i]);
+		}
+		ResultListNodeList.Clear();
+
+		for (int i = 0; i < playerDataList.Count; i++) {
+			GameObject node = Instantiate(ResultListNode);
+			node.transform.SetParent(ResultScrollView.content);
+			node.transform.position = Vector3.zero;
+			node.transform.localScale = Vector3.one;
+			PlayerScoreListNode accessNode = node.GetComponent<PlayerScoreListNode>();
+			accessNode.Setup(null, i, OnScrollValueChange, null, null, false);
+			
+			accessNode.SetName(playerDataList[i].Name);
+			accessNode.SetTotalScoreText(playerDataList[i].TotalScore.ToString());
+			accessNode.SetRankText(playerDataList[i].Rank.ToString());
+
+			ResultListNodeList.Add(node);
+		}
+	}
+	
+	public void OnScrollValueChange(Vector2 pos) {
+		//TopScrollView.normalizedPosition = pos;
+		//for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
+		//	PlayerScoreListNode node = PlayerScoreListNodeList[i].GetComponent<PlayerScoreListNode>();
+		//	node.UpdateScrollValue(pos);
+		//}
+
+		//ResetShowAdsCounter();
 	}
 }
+
