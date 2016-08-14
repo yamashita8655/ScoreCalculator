@@ -14,11 +14,14 @@ public class ResultSelectScene : SceneBase {
 	[SerializeField]	GameObject	ResultListNode;// といいつつ、PlayerScoreListNodeの使いまわし
 	[SerializeField]	ScrollRect	SelectScrollView;
 	[SerializeField]	ScrollRect	ResultScrollView;
+	[SerializeField]	ScrollRect	TopScrollView;// とりあえず仮
 	[SerializeField]	GameObject	SelectContainer;
 	[SerializeField]	GameObject	ResultContainer;
+	[SerializeField]	GameObject	TurnLabelListNode;
 
 	List<GameObject> ResultSelectListNodeList = new List<GameObject>();
 	List<GameObject> ResultListNodeList = new List<GameObject>();
+	List<GameObject> TurnLabelListNodeList = new List<GameObject>();
 
 	class PlayerData {
 		public string Name;
@@ -44,7 +47,8 @@ public class ResultSelectScene : SceneBase {
 		string[] files = System.IO.Directory.GetFiles(Application.persistentDataPath, "*.csv", System.IO.SearchOption.AllDirectories);
 
 		for (int i = 0; i < files.Length; i++) {
-			string fileName = files[i].Replace(Application.persistentDataPath+"\\", "");
+			string fileName = files[i].Replace(Application.persistentDataPath+"/", "");
+			fileName = fileName.Replace(Application.persistentDataPath+"\\", "");
 			string[] pathSplit = files[i].Split('/');
 			Debug.Log(pathSplit[pathSplit.Length-1]);
 			//Debug.Log(files[i]);
@@ -141,6 +145,12 @@ public class ResultSelectScene : SceneBase {
 			Destroy(ResultListNodeList[i]);
 		}
 		ResultListNodeList.Clear();
+		
+		for (int i = 0; i < TurnLabelListNodeList.Count; i++) {
+			TurnLabelListNodeList[i].transform.SetParent(null);
+			Destroy(TurnLabelListNodeList[i]);
+		}
+		TurnLabelListNodeList.Clear();
 
 		for (int i = 0; i < playerDataList.Count; i++) {
 			GameObject node = Instantiate(ResultListNode);
@@ -153,19 +163,43 @@ public class ResultSelectScene : SceneBase {
 			accessNode.SetName(playerDataList[i].Name);
 			accessNode.SetTotalScoreText(playerDataList[i].TotalScore.ToString());
 			accessNode.SetRankText(playerDataList[i].Rank.ToString());
+			accessNode.SetEnableInputField(false);
+			
+
+			for (int j = 0; j < playerDataList[i].ScoreList.Count; j++) {
+				accessNode.AddScoreListNode(false);
+				accessNode.SetScoreListScoreText(playerDataList[i].ScoreList[j].ToString());
+			}
 
 			ResultListNodeList.Add(node);
 		}
+
+		for (int i = 0; i < turnNum; i++) {
+			AddTurnLabelListNode();
+		}
+			
+		OnScrollValueChange(Vector2.zero);
 	}
 	
 	public void OnScrollValueChange(Vector2 pos) {
-		//TopScrollView.normalizedPosition = pos;
-		//for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
-		//	PlayerScoreListNode node = PlayerScoreListNodeList[i].GetComponent<PlayerScoreListNode>();
-		//	node.UpdateScrollValue(pos);
-		//}
+		TopScrollView.normalizedPosition = pos;
+		for (int i = 0; i < ResultListNodeList.Count; i++) {
+			PlayerScoreListNode node = ResultListNodeList[i].GetComponent<PlayerScoreListNode>();
+			node.UpdateScrollValue(pos);
+		}
+	}
+	
+	private void AddTurnLabelListNode() {
+		GameObject node = Instantiate(TurnLabelListNode);
+		node.transform.SetParent(TopScrollView.content);
+		node.transform.position = Vector3.zero;
+		node.transform.localScale = Vector3.one;
 
-		//ResetShowAdsCounter();
+		TurnLabelListNodeList.Add(node);
+		int count = TurnLabelListNodeList.Count;
+		TurnListNode turnNode = node.GetComponent<TurnListNode>();
+		turnNode.Setup();
+		turnNode.SetTurnText("Turn" + count.ToString());
 	}
 }
 
