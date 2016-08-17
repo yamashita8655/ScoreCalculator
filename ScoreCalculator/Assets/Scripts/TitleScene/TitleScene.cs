@@ -21,39 +21,6 @@ public class TitleScene : SceneBase {
 	
 	override public void Initialize() {
 		Debug.Log("TitleScene");
-		//Debug.Log(Application.persistentDataPath);
-
-		//try {
-		//	string path = Application.persistentDataPath + "/data.csv";
-		//	StreamWriter sw = new StreamWriter(
-		//		path,
-		//		false,
-		//		Encoding.UTF8);
-
-		//	//TextBox1.Textの内容を書き込む
-		//	sw.Write("test");
-		//	//閉じる
-		//	sw.Close();
-		//} catch (IOException e) {
-		//	Debug.Log("Open Error");
-		//}
-
-		//try {
-		//	string path = Application.persistentDataPath + "/data.csv";
-		//	StreamReader sr = new StreamReader(
-		//		path,
-		//		Encoding.UTF8);
-		//	string text = sr.ReadToEnd();
-		//	Debug.Log(text);
-		//	sr.Close();
-
-		//} catch (IOException e) {
-		//	Debug.Log("Read Error");
-		//}
-
-		DateTime now = DateTime.Now;
-		string nowDateString = now.ToString("yyyy_MM_dd_HH_mm_ss");
-		Debug.Log(nowDateString);
 	}
 	 
 	public void OnClickStartCulcButton() {

@@ -40,7 +40,6 @@ public class CsvManager : Singleton<CsvManager> {
 				fileNameAndPath,
 				Encoding.UTF8);
 			input = sr.ReadToEnd();
-			Debug.Log(input);
 			sr.Close();
 
 		} catch (IOException e) {

@@ -50,7 +50,6 @@ public class ResultSelectScene : SceneBase {
 			string fileName = files[i].Replace(Application.persistentDataPath+"/", "");
 			fileName = fileName.Replace(Application.persistentDataPath+"\\", "");
 			string[] pathSplit = files[i].Split('/');
-			Debug.Log(pathSplit[pathSplit.Length-1]);
 			//Debug.Log(files[i]);
 			//Debug.Log(Application.persistentDataPath);
 			//Debug.Log(fileName);
@@ -163,6 +162,11 @@ public class ResultSelectScene : SceneBase {
 			accessNode.SetName(playerDataList[i].Name);
 			accessNode.SetTotalScoreText(playerDataList[i].TotalScore.ToString());
 			accessNode.SetRankText(playerDataList[i].Rank.ToString());
+			if (playerDataList[i].Rank == 1) {
+				accessNode.SetRankTopIconEnable(true);
+			} else {
+				accessNode.SetRankTopIconEnable(false);
+			}
 			accessNode.SetEnableInputField(false);
 			
 

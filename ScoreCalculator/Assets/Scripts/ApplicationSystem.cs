@@ -6,7 +6,7 @@ public class ApplicationSystem : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		SceneManager.Instance.Initialize();
-		UnityAdsManager.Instance.Initialize();
+		//UnityAdsManager.Instance.Initialize();
 		CsvManager.Instance.Initialize();
 	}
 	
