@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
-using UnityEngine.Advertisements;
+//using UnityEngine.Advertisements;
 using System.Collections;
 
 public class UnityAdsManager : Singleton<UnityAdsManager> {
+#if false
 	public void Initialize() {
 		Debug.Log("UnityAdsManager init");
 #if UNITY_EDITOR
@@ -17,4 +18,5 @@ public class UnityAdsManager : Singleton<UnityAdsManager> {
 			Advertisement.Show();
 		}
 	}
+#endif
 }

@@ -18,6 +18,7 @@ public class ResultSelectScene : SceneBase {
 	[SerializeField]	GameObject	SelectContainer;
 	[SerializeField]	GameObject	ResultContainer;
 	[SerializeField]	GameObject	TurnLabelListNode;
+	[SerializeField]	MessageDialogOkCancel	MessageDialogOkCancelComponent;
 
 	List<GameObject> ResultSelectListNodeList = new List<GameObject>();
 	List<GameObject> ResultListNodeList = new List<GameObject>();
@@ -47,6 +48,7 @@ public class ResultSelectScene : SceneBase {
 		string[] files = System.IO.Directory.GetFiles(Application.persistentDataPath, "*.csv", System.IO.SearchOption.AllDirectories);
 
 		for (int i = 0; i < files.Length; i++) {
+			string originalFileName = files[i];
 			string fileName = files[i].Replace(Application.persistentDataPath+"/", "");
 			fileName = fileName.Replace(Application.persistentDataPath+"\\", "");
 			string[] pathSplit = files[i].Split('/');
@@ -80,7 +82,7 @@ public class ResultSelectScene : SceneBase {
 				}
 			}
 			
-			selectNode.Setup(date, title, gameName, OnClickOkButtonCallback, src);
+			selectNode.Setup(originalFileName, date, title, gameName, OnClickOkButtonCallback, OnClickDeleteButtonCallback, src);
 		}		
 	}
 	 
@@ -95,6 +97,31 @@ public class ResultSelectScene : SceneBase {
 	public void OnClickOkButtonCallback(Transform obj, string src) {
 		SwitchContainer(false);
 		ResultInitialize(src);
+	}
+
+	public void OnClickDeleteButtonCallback(string fileName, ResultSelectListNode deleteNode) {
+		string str = string.Format("削除しますか？");
+		MessageDialogOkCancelComponent.Open(str, () => {
+			DeleteSaveFile(fileName);
+			RemoveResultSelectListNode(deleteNode);
+		});
+	}
+
+	private void DeleteSaveFile(string fileName) {
+		System.IO.File.Delete(fileName);
+	}
+
+	private void RemoveResultSelectListNode(ResultSelectListNode deleteNode) {
+		for (int i = 0; i < ResultSelectListNodeList.Count; i++) {
+			GameObject obj = ResultSelectListNodeList[i];
+			ResultSelectListNode node = obj.GetComponent<ResultSelectListNode>();
+			if (node == deleteNode) {
+				ResultSelectListNodeList.Remove(obj);
+				obj.transform.SetParent(null);
+				Destroy(obj);
+				break;
+			}
+		}
 	}
 
 	private void SwitchContainer(bool activeSelect) {

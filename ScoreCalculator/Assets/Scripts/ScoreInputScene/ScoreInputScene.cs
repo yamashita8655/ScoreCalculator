@@ -203,6 +203,7 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	void ScoreInputUpdate() {
+#if false
 		if (ShowAdsFlag == false) {
 		} else {
 			if (NowState == State.ScoreInputUpdate) {
@@ -214,6 +215,7 @@ public class ScoreInputScene : SceneBase {
 				}
 			}
 		}
+#endif
 	}
 	
 	void ResultInit() {
