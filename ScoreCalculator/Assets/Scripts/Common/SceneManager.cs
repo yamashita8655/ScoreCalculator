@@ -16,7 +16,6 @@ public class SceneManager : Singleton<SceneManager> {
 	private GameObject CurrentScene = null;
 
 	public void Initialize() {
-		Debug.Log("SceneMangaer init");
 		SceneObjectDict.Add(TitleScene, TitleSceneObject);
 		SceneObjectDict.Add(ScoreInputScene, ScoreInputSceneObject);
 		SceneObjectDict.Add(ResultSelectScene, ResultSelectSceneObject);

@@ -8,6 +8,7 @@ public class ApplicationSystem : MonoBehaviour {
 		SceneManager.Instance.Initialize();
 		//UnityAdsManager.Instance.Initialize();
 		CsvManager.Instance.Initialize();
+		GoogleAdmobManager.Instance.Initialize();
 	}
 	
 	// Update is called once per frame

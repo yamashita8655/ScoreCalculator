@@ -95,7 +95,6 @@ public class ScoreInputScene : SceneBase {
 	//}
 
 	override public void Initialize() {
-		Debug.Log("ScoreInputScene");
 		NowState = State.PlayerNameInputInit;
 
 		HeaderContainer.SetActive(true); 
@@ -465,6 +464,7 @@ public class ScoreInputScene : SceneBase {
 	
 	public void OnClickResultSaveButton() {
 		ResetShowAdsCounter();
+		GoogleAdmobManager.Instance.ShowAdmob();
 		SaveDialogComponent.Open(SaveGameData);
 	}
 	

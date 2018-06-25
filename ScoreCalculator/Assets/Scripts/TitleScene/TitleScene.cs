@@ -20,14 +20,14 @@ public class TitleScene : SceneBase {
 	//}
 	
 	override public void Initialize() {
-		Debug.Log("TitleScene");
 	}
 	 
 	public void OnClickStartCulcButton() {
-		SceneManager.Instance.ChangeScene(SceneManager.ScoreInputScene);
 		//SceneManager.Instance.ChangeScene(SceneManager.AnchorTestScene);
+		GoogleAdmobManager.Instance.ShowAdmob();
+		SceneManager.Instance.ChangeScene(SceneManager.ScoreInputScene);
 	}
-	
+
 	public void OnClickDataCheckButton() {
 		SceneManager.Instance.ChangeScene(SceneManager.ResultSelectScene);
 	}
