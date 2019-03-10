@@ -13,18 +13,23 @@ public class GoogleAdmobManager : Singleton<GoogleAdmobManager> {
 	private string adUnitId = "ca-app-pub-4566588771611947/9089539691";// こっちは、本番
 #endif
 
+    private bool isReady = false;
+
 	public void Initialize() {
 		InterstitialAd = new InterstitialAd(adUnitId);
 		InterstitialAd.OnAdFailedToLoad += OnAdFailedToLoad;
 		InterstitialAd.OnAdLoaded += OnAdLoaded;
 		InterstitialAd.OnAdClosed += OnAdClosed;
-	}
+        isReady = false;
+        AdRequest request = new AdRequest.Builder().Build();
+        InterstitialAd.LoadAd(request);
+    }
 
-	public void OnAdLoaded(object sender, System.EventArgs arg) {
-		InterstitialAd.Show();
-	}
+    public void OnAdLoaded(object sender, System.EventArgs arg) {
+        isReady = true;
+    }
 
-	public void OnAdClosed(object sender, System.EventArgs arg) {
+    public void OnAdClosed(object sender, System.EventArgs arg) {
 	}
 
 	public void OnAdFailedToLoad(object sender, AdFailedToLoadEventArgs arg) {
@@ -40,8 +45,9 @@ public class GoogleAdmobManager : Singleton<GoogleAdmobManager> {
 	public void ShowAdmob() {
 #if UNITY_EDITOR
 #else
-		AdRequest request = new AdRequest.Builder().Build();
-		InterstitialAd.LoadAd(request);
+        if (isReady == true) {
+            InterstitialAd.Show();
+        }
 #endif
-	}
+    }
 }

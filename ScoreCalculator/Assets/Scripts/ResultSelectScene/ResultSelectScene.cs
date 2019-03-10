@@ -87,7 +87,8 @@ public class ResultSelectScene : SceneBase {
 	}
 	 
 	public void OnClickTitleButton() {
-		SceneManager.Instance.ChangeScene(SceneManager.TitleScene);
+        GoogleAdmobManager.Instance.ShowAdmob();
+        SceneManager.Instance.ChangeScene(SceneManager.TitleScene);
 	}
 
 	public void OnClickBackButton() {

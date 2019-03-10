@@ -95,7 +95,7 @@ public class ScoreInputScene : SceneBase {
 	//}
 
 	override public void Initialize() {
-		NowState = State.PlayerNameInputInit;
+        NowState = State.PlayerNameInputInit;
 
 		HeaderContainer.SetActive(true); 
 		PlayerNameInputContainer.SetActive(false); 
@@ -167,7 +167,9 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	void ScoreInputInit() {
-		ToggleContainer(ToggleType.ScoreInput);
+        // ここで、Admob初期化して、リザルトの時に表示されるようにする
+        GoogleAdmobManager.Instance.Initialize();
+        ToggleContainer(ToggleType.ScoreInput);
 		NowState = State.ScoreInputUpdate;
 
 		if (IsScoreListCountZero() == true) {
@@ -413,8 +415,8 @@ public class ScoreInputScene : SceneBase {
 	}
 	
 	public void OnClickScoreInputResultButton() {
-		ResetShowAdsCounter();
-		SaveInprogressData();
+        GoogleAdmobManager.Instance.ShowAdmob();
+        SaveInprogressData();
 		bool findEmptyNode = false;
 		for (int i = 0; i < PlayerScoreListNodeList.Count; i++) {
 			GameObject obj = PlayerScoreListNodeList[i];

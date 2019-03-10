@@ -24,11 +24,12 @@ public class TitleScene : SceneBase {
 	 
 	public void OnClickStartCulcButton() {
 		//SceneManager.Instance.ChangeScene(SceneManager.AnchorTestScene);
-		GoogleAdmobManager.Instance.ShowAdmob();
 		SceneManager.Instance.ChangeScene(SceneManager.ScoreInputScene);
 	}
 
 	public void OnClickDataCheckButton() {
-		SceneManager.Instance.ChangeScene(SceneManager.ResultSelectScene);
+        // ここで、Admob初期化して、セーブデータから戻ってくるときに、表示するようにする
+        GoogleAdmobManager.Instance.Initialize();
+        SceneManager.Instance.ChangeScene(SceneManager.ResultSelectScene);
 	}
 }
