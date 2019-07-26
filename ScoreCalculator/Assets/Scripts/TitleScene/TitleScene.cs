@@ -32,4 +32,8 @@ public class TitleScene : SceneBase {
         GoogleAdmobManager.Instance.Initialize();
         SceneManager.Instance.ChangeScene(SceneManager.ResultSelectScene);
 	}
+	
+	public void OnClickPrivacyPolicyButton() {
+		Application.OpenURL("https://natural-nail-eye.sakura.ne.jp/privacy_policy.html");
+	}
 }
